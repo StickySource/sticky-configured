@@ -16,7 +16,6 @@ import java.lang.reflect.Field;
 
 import net.stickycode.coercion.CoercionTarget;
 
-
 public class ConfiguredField
     implements CoercionTarget {
 
@@ -32,32 +31,6 @@ public class ConfiguredField
     this.key = key;
   }
 
-  private Object getValue(Object target, Field field) {
-    try {
-      if (field.isAccessible())
-        return field.get(target);
-
-      return getInaccessibleField(target, field);
-    }
-    catch (IllegalArgumentException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
-    catch (IllegalAccessException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
-  }
-
-  private Object getInaccessibleField(Object target, Field field)
-      throws IllegalArgumentException, IllegalAccessException {
-    try {
-      field.setAccessible(true);
-      return field.get(target);
-    }
-    finally {
-      field.setAccessible(false);
-    }
-  }
-
   public Object getDefaultValue() {
     return defaultValue;
   }
@@ -70,13 +43,63 @@ public class ConfiguredField
     return this.key;
   }
 
-  public void configure(Object coerce) {
-
+  public void configure(Object value) {
+    setValue(value);
   }
 
   @Override
   public Class<?> getType() {
     return field.getType();
+  }
+
+  public boolean hasDefaultValue() {
+    return defaultValue != null;
+  }
+
+  private Object getValue(Object target, Field field) {
+    boolean accessible = field.isAccessible();
+    try {
+      field.setAccessible(true);
+      return safeGetField(target, field);
+    }
+    finally {
+      field.setAccessible(accessible);
+    }
+  }
+
+  private Object safeGetField(Object target, Field field) {
+    try {
+      return field.get(target);
+    }
+    catch (IllegalArgumentException e) {
+      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
+    }
+    catch (IllegalAccessException e) {
+      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
+    }
+  }
+
+  private void setValue(Object value) {
+    boolean accessible = field.isAccessible();
+    field.setAccessible(true);
+    try {
+      safeSetValue(value);
+    }
+    finally {
+      field.setAccessible(accessible);
+    }
+  }
+
+  private void safeSetValue(Object value) {
+    try {
+      field.set(target, value);
+    }
+    catch (IllegalArgumentException e) {
+      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
+    }
+    catch (IllegalAccessException e) {
+      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
+    }
   }
 
 }
