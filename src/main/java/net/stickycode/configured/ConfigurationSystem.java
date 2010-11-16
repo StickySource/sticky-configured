@@ -45,9 +45,13 @@ public class ConfigurationSystem {
 
   public void configure() {
     for (ConfiguredField field : fields) {
-      String value = lookupValue(field.getKey());
       Coercion<?> coercion = getCoercion(field);
-      field.configure(coercion.coerce(field, value));
+      String value = lookupValue(field.getKey());
+      if (value != null)
+        field.configure(coercion.coerce(field, value));
+      else
+        if (!field.hasDefaultValue())
+          throw new ConfigurationValueNotFoundForKeyException(field.getKey(), sources);
     }
   }
 
@@ -66,7 +70,7 @@ public class ConfigurationSystem {
         return s.getValue(key);
     }
 
-    throw new ConfigurationValueNotFoundForKeyException(key, sources);
+    return null;
   }
 
 }
