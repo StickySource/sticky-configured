@@ -22,6 +22,7 @@ public class ConfigurationSystemTest {
   private static class OneField {
     private String noDefault;
     private String defaulted = "blah";
+    private OneField noCoercion;
   }
 
   @Test
@@ -49,6 +50,15 @@ public class ConfigurationSystemTest {
   public void noValue() throws SecurityException, NoSuchFieldException {
     ConfigurationSystem s = new ConfigurationSystem();
     Field field = OneField.class.getDeclaredField("noDefault");
+    OneField target = new OneField();
+    s.registerField(target, field);
+    s.configure();
+  }
+
+  @Test(expected=CoercionNotFoundForTypeException.class)
+  public void noCoercion() throws SecurityException, NoSuchFieldException {
+    ConfigurationSystem s = new ConfigurationSystem();
+    Field field = OneField.class.getDeclaredField("noCoercion");
     OneField target = new OneField();
     s.registerField(target, field);
     s.configure();
