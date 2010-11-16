@@ -42,4 +42,24 @@ public class ConfiguredFieldTest {
     assertThat(f.getValue()).isEqualTo("blah");
   }
 
+  @Test
+  public void accessible() throws SecurityException, NoSuchFieldException {
+    Field field = OneField.class.getDeclaredField("noDefault");
+    field.setAccessible(true);
+    ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new OneField(), field);
+    assertThat(f.getDefaultValue()).isNull();
+    assertThat(f.getValue()).isNull();
+    field.setAccessible(false);
+  }
+
+  @Test(expected=TriedToAccessFieldButWasDeniedException.class)
+  public void nullTarget() throws SecurityException, NoSuchFieldException {
+    Field field = OneField.class.getDeclaredField("noDefault");
+    field.setAccessible(true);
+    ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new String(), field);
+    assertThat(f.getDefaultValue()).isNull();
+    assertThat(f.getValue()).isNull();
+    field.setAccessible(false);
+  }
+
 }

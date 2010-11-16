@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.stickycode.coercion.Coercion;
-import net.stickycode.coercion.CoercionNotFoundForTypeException;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.StringCoercion;
 import net.stickycode.coercion.StringConstructorCoercion;

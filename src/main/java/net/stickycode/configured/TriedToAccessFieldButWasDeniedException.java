@@ -25,7 +25,7 @@ public class TriedToAccessFieldButWasDeniedException
   }
 
   public TriedToAccessFieldButWasDeniedException(IllegalArgumentException e, Field field, Object target) {
-    super(e, "Field '{}' does not seem to match the target '{}'", field.getName(), target.getClass().getName());
+    super(e, "Field '{}' was not found on target '{}'", field.getName(), target.getClass().getName());
   }
 
 }
