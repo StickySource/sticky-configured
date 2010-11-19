@@ -25,11 +25,18 @@ public class ConfigurationSystem {
 
   private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
   private List<ConfigurationSource> sources = new LinkedList<ConfigurationSource>();
-  private KeyGenerator keyGenerator = new SimpleNameDotFieldKeyGenerator();
+  private final KeyGenerator keyGenerator;
   private List<Coercion<?>> coercions = new LinkedList<Coercion<?>>();
 
   public ConfigurationSystem() {
+    this(new SimpleNameDotFieldKeyGenerator());
+    coercions.add(new StringCoercion());
+    coercions.add(new StringConstructorCoercion());
+  }
+
+  public ConfigurationSystem(KeyGenerator keyGenerator) {
     super();
+    this.keyGenerator = keyGenerator;
     coercions.add(new StringCoercion());
     coercions.add(new StringConstructorCoercion());
   }
