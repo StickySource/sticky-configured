@@ -13,8 +13,9 @@
 package net.stickycode.configured.source;
 
 import net.stickycode.configured.ConfigurationSource;
+import net.stickycode.stereotype.component.StickyRepository;
 
-
+@StickyRepository
 public class EnvironmentConfigurationSource
     implements ConfigurationSource {
 

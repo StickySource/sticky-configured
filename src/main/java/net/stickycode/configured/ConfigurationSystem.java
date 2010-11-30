@@ -16,14 +16,20 @@ import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.StringCoercion;
 import net.stickycode.coercion.StringConstructorCoercion;
+import net.stickycode.stereotype.StickyComponent;
 
+@StickyComponent
 public class ConfigurationSystem {
 
   private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
+
+  @Inject
   private List<ConfigurationSource> sources = new LinkedList<ConfigurationSource>();
   private final KeyGenerator keyGenerator;
   private List<Coercion<?>> coercions = new LinkedList<Coercion<?>>();
