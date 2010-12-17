@@ -18,6 +18,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.StringCoercion;
@@ -26,6 +29,8 @@ import net.stickycode.stereotype.StickyComponent;
 
 @StickyComponent
 public class ConfigurationSystem {
+
+  private Logger log = LoggerFactory.getLogger(getClass());
 
   private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
 
@@ -45,6 +50,7 @@ public class ConfigurationSystem {
     this.keyGenerator = keyGenerator;
     coercions.add(new StringCoercion());
     coercions.add(new StringConstructorCoercion());
+    log.info("Initialising configuration with key generator {} and coercions {}", keyGenerator, coercions);
   }
 
   public void registerField(Object target, Field field) {
