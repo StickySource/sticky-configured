@@ -28,16 +28,14 @@ public class ConfiguredFieldTest {
 
   @Test
   public void noDefault() throws SecurityException, NoSuchFieldException {
-    Field field = OneField.class.getDeclaredField("noDefault");
-    ConfiguredField f = new ConfiguredField("oneField.noDefault", new OneField(), field);
+    ConfiguredField f = configuredField("noDefault");
     assertThat(f.getDefaultValue()).isNull();
     assertThat(f.getValue()).isNull();
   }
 
   @Test
   public void defaulted() throws SecurityException, NoSuchFieldException {
-    Field field = OneField.class.getDeclaredField("defaulted");
-    ConfiguredField f = new ConfiguredField("oneField.defaulted", new OneField(), field);
+    ConfiguredField f = configuredField("defaulted");
     assertThat(f.getDefaultValue()).isEqualTo("blah");
     assertThat(f.getValue()).isEqualTo("blah");
   }
@@ -45,21 +43,34 @@ public class ConfiguredFieldTest {
   @Test
   public void accessible() throws SecurityException, NoSuchFieldException {
     Field field = OneField.class.getDeclaredField("noDefault");
-    field.setAccessible(true);
-    ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new OneField(), field);
-    assertThat(f.getDefaultValue()).isNull();
-    assertThat(f.getValue()).isNull();
     field.setAccessible(false);
+    try {
+      ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new OneField(), field);
+      assertThat(f.getDefaultValue()).isNull();
+      assertThat(f.getValue()).isNull();
+    }
+    finally {
+      field.setAccessible(true);
+    }
   }
 
   @Test(expected=TriedToAccessFieldButWasDeniedException.class)
   public void nullTarget() throws SecurityException, NoSuchFieldException {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(true);
-    ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new String(), field);
-    assertThat(f.getDefaultValue()).isNull();
-    assertThat(f.getValue()).isNull();
-    field.setAccessible(false);
+    try {
+      ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new String(), field);
+      assertThat(f.getDefaultValue()).isNull();
+      assertThat(f.getValue()).isNull();
+    }
+    finally {
+      field.setAccessible(false);
+    }
   }
 
+  private ConfiguredField configuredField(String name) throws NoSuchFieldException {
+    Field field = OneField.class.getDeclaredField(name);
+    ConfiguredField f = new ConfiguredField("oneField." + name, new OneField(), field);
+    return f;
+  }
 }

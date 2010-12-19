@@ -47,18 +47,18 @@ public class ConfigurationSystemTest {
   }
 
   @Test(expected=ConfigurationValueNotFoundForKeyException.class)
-  public void noValue() throws SecurityException, NoSuchFieldException {
-    ConfigurationSystem s = new ConfigurationSystem();
-    Field field = OneField.class.getDeclaredField("noDefault");
-    OneField target = new OneField();
-    s.registerField(target, field);
-    s.configure();
+  public void noValueWithNoDefaultErrors() throws SecurityException, NoSuchFieldException {
+    configureField("noDefault");
   }
 
   @Test(expected=CoercionNotFoundForTypeException.class)
   public void noCoercion() throws SecurityException, NoSuchFieldException {
+    configureField("noCoercion");
+  }
+
+  private void configureField(String fieldName) throws NoSuchFieldException {
     ConfigurationSystem s = new ConfigurationSystem();
-    Field field = OneField.class.getDeclaredField("noCoercion");
+    Field field = OneField.class.getDeclaredField(fieldName);
     OneField target = new OneField();
     s.registerField(target, field);
     s.configure();
