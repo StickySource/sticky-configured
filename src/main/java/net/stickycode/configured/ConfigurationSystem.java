@@ -32,10 +32,10 @@ public class ConfigurationSystem {
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
-  private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
-
   @Inject
   private List<ConfigurationSource> sources = new LinkedList<ConfigurationSource>();
+
+  private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
   private final KeyGenerator keyGenerator;
   private List<Coercion<?>> coercions = new LinkedList<Coercion<?>>();
 
@@ -55,7 +55,10 @@ public class ConfigurationSystem {
 
   public void registerField(Object target, Field field) {
     String key = keyGenerator.getKey(target, field);
-    fields.add(new ConfiguredField(key, target, field));
+    ConfiguredField configuredField = new ConfiguredField(key, target, field);
+    fields.add(configuredField);
+
+    configureField(configuredField);
   }
 
   public void add(ConfigurationSource source) {
@@ -64,14 +67,18 @@ public class ConfigurationSystem {
 
   public void configure() {
     for (ConfiguredField field : fields) {
-      Coercion<?> coercion = getCoercion(field);
-      String value = lookupValue(field.getKey());
-      if (value != null)
-        field.configure(coercion.coerce(field, value));
-      else
-        if (!field.hasDefaultValue())
-          throw new ConfigurationValueNotFoundForKeyException(field.getKey(), sources);
+      configureField(field);
     }
+  }
+
+  protected void configureField(ConfiguredField field) {
+    Coercion<?> coercion = getCoercion(field);
+    String value = lookupValue(field.getKey());
+    if (value != null)
+      field.configure(coercion.coerce(field, value));
+    else
+      if (!field.hasDefaultValue())
+        throw new ConfigurationValueNotFoundForKeyException(field.getKey(), sources);
   }
 
   private Coercion<?> getCoercion(CoercionTarget target) {
