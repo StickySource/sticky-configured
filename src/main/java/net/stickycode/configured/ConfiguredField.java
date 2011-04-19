@@ -13,11 +13,12 @@
 package net.stickycode.configured;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 
-import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.coercion.AbstractCoercionType;
 
 public class ConfiguredField
-    implements CoercionTarget {
+    extends AbstractCoercionType {
 
   private final Object defaultValue;
   private final String key;
@@ -100,6 +101,16 @@ public class ConfiguredField
     catch (IllegalAccessException e) {
       throw new TriedToAccessFieldButWasDeniedException(e, field, target);
     }
+  }
+
+  @Override
+  public boolean isGenericType() {
+    return false;
+  }
+
+  @Override
+  public ParameterizedType getGenericType() {
+    return (ParameterizedType) field.getGenericType();
   }
 
 }
