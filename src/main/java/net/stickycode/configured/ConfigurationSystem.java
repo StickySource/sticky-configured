@@ -23,8 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.coercion.CollectionCoercion;
+import net.stickycode.coercion.PatternCoercion;
 import net.stickycode.coercion.StringCoercion;
 import net.stickycode.coercion.StringConstructorCoercion;
+import net.stickycode.coercion.ValueOfMethodCoercion;
 import net.stickycode.stereotype.StickyComponent;
 
 @StickyComponent
@@ -41,14 +44,15 @@ public class ConfigurationSystem {
 
   public ConfigurationSystem() {
     this(new SimpleNameDotFieldKeyGenerator());
-    coercions.add(new StringCoercion());
-    coercions.add(new StringConstructorCoercion());
   }
 
   public ConfigurationSystem(KeyGenerator keyGenerator) {
     super();
     this.keyGenerator = keyGenerator;
     coercions.add(new StringCoercion());
+    coercions.add(new PatternCoercion());
+    coercions.add(new CollectionCoercion(coercions));
+    coercions.add(new ValueOfMethodCoercion());
     coercions.add(new StringConstructorCoercion());
     log.info("Initialising configuration with key generator {} and coercions {}", keyGenerator, coercions);
   }
