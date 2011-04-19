@@ -105,7 +105,7 @@ public class ConfiguredField
 
   @Override
   public boolean isGenericType() {
-    return false;
+    return getGenericType() != null;
   }
 
   @Override
