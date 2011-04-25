@@ -79,10 +79,6 @@ public class ConfigurationSystem {
     configureField(configuredField);
   }
 
-  public void add(ConfigurationSource source) {
-    sources.add(source);
-  }
-
   public void configure() {
     for (ConfiguredField field : fields)
       configureField(field);
