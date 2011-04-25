@@ -23,4 +23,9 @@ public class FieldNameKeyGenerator
     return field.getName();
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
+
 }

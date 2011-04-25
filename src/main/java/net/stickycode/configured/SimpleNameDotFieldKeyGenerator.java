@@ -25,4 +25,9 @@ public class SimpleNameDotFieldKeyGenerator
         field.getName();
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
+
 }
