@@ -13,16 +13,15 @@
 package net.stickycode.configured;
 
 import java.beans.Introspector;
-import java.lang.reflect.Field;
 
 public class SimpleNameDotFieldKeyGenerator
-    implements KeyGenerator {
+    implements ConfigurationKeyBuilder {
 
   @Override
-  public String getKey(Object target, Field field) {
-    return Introspector.decapitalize(target.getClass().getSimpleName())
+  public String buildKey(Configuration configuration, ConfigurationAttribute attribute) {
+    return Introspector.decapitalize(configuration.getType().getSimpleName())
         + "." +
-        field.getName();
+        attribute.getName();
   }
 
   @Override

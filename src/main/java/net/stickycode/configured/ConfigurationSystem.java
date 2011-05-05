@@ -12,10 +12,6 @@
  */
 package net.stickycode.configured;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
-import net.stickycode.coercion.Coercions;
 import net.stickycode.stereotype.StickyComponent;
 
 @StickyComponent
@@ -40,75 +35,61 @@ public class ConfigurationSystem {
   @Inject
   private CoercionFinder coercions;
 
-  private List<ConfiguredField> fields = new LinkedList<ConfiguredField>();
-  private final KeyGenerator keyGenerator;
+  @Inject
+  private ConfigurationRepository configurations;
+
+  private final ConfigurationKeyBuilder keyBuilder;
 
   public ConfigurationSystem() {
-    this.keyGenerator = new SimpleNameDotFieldKeyGenerator();
-  }
-
-  /**
-   * For non DI instantiation
-   */
-  public ConfigurationSystem(KeyGenerator keyGenerator, ConfigurationSource source) {
-    super();
-    this.keyGenerator = keyGenerator;
-    this.coercions = new Coercions();
-    this.sources = Collections.singleton(source);
-    log.debug("using key generator {}", keyGenerator);
-  }
-
-  public ConfigurationSystem(ConfigurationSource source) {
-    super();
-    this.keyGenerator = new SimpleNameDotFieldKeyGenerator();
-    this.coercions = new Coercions();
-    this.sources = Collections.singleton(source);
-    log.debug("using key generator {}", keyGenerator);
+    this.keyBuilder = new SimpleNameDotFieldKeyGenerator();
   }
 
   @PostConstruct
   public void initialise() {
-    log.info("Initialising configuration with configuration sources {} and coercions {}", keyGenerator, coercions);
-  }
-
-  public void registerField(Object target, Field field) {
-    String key = keyGenerator.getKey(target, field);
-    ConfiguredField configuredField = new ConfiguredField(key, target, field);
-    fields.add(configuredField);
-
-    configureField(configuredField);
+    log.info("Initialising configuration with configuration sources {} and coercions {}", keyBuilder, coercions);
   }
 
   public void configure() {
-    for (ConfiguredField field : fields)
-      configureField(field);
+    for (Configuration configuration : configurations)
+      configure(configuration);
   }
 
-  void configureField(ConfiguredField field) {
+  void configure(Configuration configuration) {
+    configuration.preConfigure();
+    for (ConfigurationAttribute attribute : configuration) {
+      String key = keyBuilder.buildKey(configuration, attribute);
+      processAttribute(key, attribute);
+    }
+    configuration.postConfigure();
+  }
+
+  void processAttribute(String key, ConfigurationAttribute field) {
+    // try to find the coercion first as this failure is cheaper
+    // that a look up failure given there is a reasonable chance
+    // that configuration is looked up externally
     Coercion<?> coercion = coercions.find(field);
-    String value = lookupValue(field);
-    if (value != null)
-      field.configure(coercion.coerce(field, value));
+    String value = lookupValue(key);
+
+    // a null value means not configuration was found so do not set it
+    if (value != null) {
+      field.setValue(coercion.coerce(field, value));
+    }
+    else
+      if (!field.hasDefaultValue()) {
+        throw new NoConfiguredValueAndNoDefaultValueForAttribute(key, sources);
+      }
   }
 
   /**
-   * @return the value to use or null if there is a default value and one is not defined in any configuration
+   * @return the value to use or null one is not defined in any configuration
    */
-  private String lookupValue(ConfiguredField field) {
-    String key = field.getKey();
+  String lookupValue(String key) {
     for (ConfigurationSource s : sources) {
       if (s.hasValue(key))
         return s.getValue(key);
     }
 
-    if (!field.hasDefaultValue())
-      throw new ConfigurationValueNotFoundForKeyException(field.getKey(), sources);
-
     return null;
-  }
-
-  public int registeredFieldCount() {
-    return fields.size();
   }
 
 }

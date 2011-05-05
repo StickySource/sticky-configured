@@ -12,19 +12,17 @@
  */
 package net.stickycode.configured;
 
-import java.util.List;
+import java.util.Collection;
 
-import net.stickycode.coercion.Coercion;
-import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.exception.PermanentException;
 
 
 @SuppressWarnings("serial")
-public class CoercionNotFoundForTypeException
+public class NoConfiguredValueAndNoDefaultValueForAttribute
     extends PermanentException {
 
-  public CoercionNotFoundForTypeException(CoercionTarget target, List<Coercion<?>> coercions) {
-    super("A coercion was not found for type '{}' in '{}'", target, coercions);
+  public NoConfiguredValueAndNoDefaultValueForAttribute(String key, Collection<ConfigurationSource> sources) {
+    super("A value for '{}' could not be found in '{}'", key, sources);
   }
 
 }

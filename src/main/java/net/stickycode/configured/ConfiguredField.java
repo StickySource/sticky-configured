@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
+ * Copyright (c) 2011 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
  * and you may not use this file except in compliance with the Apache License Version 2.0.
@@ -12,24 +12,25 @@
  */
 package net.stickycode.configured;
 
+import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import net.stickycode.coercion.AbstractCoercionType;
 
 public class ConfiguredField
-    extends AbstractCoercionType {
+    extends AbstractCoercionType
+    implements ConfigurationAttribute {
 
   private final Object defaultValue;
-  private final String key;
   private final Object target;
   private final Field field;
 
-  public ConfiguredField(String key, Object target, Field field) {
+  public ConfiguredField(Object target, Field field) {
     this.defaultValue = getValue(target, field);
     this.target = target;
     this.field = field;
-    this.key = key;
   }
 
   public Object getDefaultValue() {
@@ -40,12 +41,8 @@ public class ConfiguredField
     return getValue(target, field);
   }
 
-  public String getKey() {
-    return this.key;
-  }
-
-  public void configure(Object value) {
-    setValue(value);
+  public String getCategory() {
+    return Introspector.decapitalize(target.getClass().getSimpleName());
   }
 
   @Override
@@ -80,7 +77,7 @@ public class ConfiguredField
     }
   }
 
-  private void setValue(Object value) {
+  public void setValue(Object value) {
     boolean accessible = field.isAccessible();
     field.setAccessible(true);
     try {
@@ -105,12 +102,26 @@ public class ConfiguredField
 
   @Override
   public boolean isGenericType() {
-    return getGenericType() != null;
+    return field.getGenericType() instanceof ParameterizedType;
   }
 
   @Override
   public ParameterizedType getGenericType() {
-    return (ParameterizedType) field.getGenericType();
+    Type type = field.getGenericType();
+    if (type instanceof ParameterizedType)
+      return (ParameterizedType) type;
+
+    throw new IllegalStateException("Field is not parameterised");
+  }
+
+  @Override
+  public String getName() {
+    return field.getName();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("ConfiguredField{'%s' on '%s'}", getName(), getCategory());
   }
 
 }

@@ -13,8 +13,11 @@
 package net.stickycode.configured;
 
 import java.lang.reflect.Field;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
+
+import net.stickycode.coercion.Coercion;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -24,6 +27,8 @@ public class ConfiguredFieldTest {
   private static class OneField {
     private String noDefault;
     private String defaulted = "blah";
+    private Coercion<Pattern> generic;
+    private Float[] floats;
   }
 
   @Test
@@ -36,8 +41,11 @@ public class ConfiguredFieldTest {
   @Test
   public void defaulted() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("defaulted");
+    assertThat(f.hasDefaultValue()).isTrue();
     assertThat(f.getDefaultValue()).isEqualTo("blah");
     assertThat(f.getValue()).isEqualTo("blah");
+    assertThat(f.getName()).isEqualTo("defaulted");
+    assertThat(f.getCategory()).isEqualTo("oneField");
   }
 
   @Test
@@ -45,7 +53,7 @@ public class ConfiguredFieldTest {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(false);
     try {
-      ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new OneField(), field);
+      ConfiguredField f = new ConfiguredField(new OneField(), field);
       assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
@@ -59,7 +67,7 @@ public class ConfiguredFieldTest {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(true);
     try {
-      ConfiguredField f = new ConfiguredField("noDefault.defaultAccess", new String(), field);
+      ConfiguredField f = new ConfiguredField(new String(), field);
       assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
@@ -68,9 +76,37 @@ public class ConfiguredFieldTest {
     }
   }
 
+  @Test
+  public void setit() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("defaulted");
+    assertThat(f.getDefaultValue()).isEqualTo("blah");
+    assertThat(f.getValue()).isEqualTo("blah");
+    f.setValue("notblah");
+    assertThat(f.getValue()).isEqualTo("notblah");
+  }
+
+  @Test
+  public void generic() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("generic");
+    assertThat(f.hasDefaultValue()).isFalse();
+    assertThat(f.getDefaultValue()).isEqualTo(null);
+    assertThat(f.isGenericType()).isTrue();
+    assertThat(f.getGenericType()).isNotNull();
+    assertThat(f.isArray()).isFalse();
+  }
+
+  @Test
+  public void floats() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("floats");
+    assertThat(f.hasDefaultValue()).isFalse();
+    assertThat(f.getDefaultValue()).isEqualTo(null);
+    assertThat(f.isGenericType()).isFalse();
+    assertThat(f.isArray()).isTrue();
+  }
+
   private ConfiguredField configuredField(String name) throws NoSuchFieldException {
     Field field = OneField.class.getDeclaredField(name);
-    ConfiguredField f = new ConfiguredField("oneField." + name, new OneField(), field);
+    ConfiguredField f = new ConfiguredField(new OneField(), field);
     return f;
   }
 }

@@ -12,15 +12,12 @@
  */
 package net.stickycode.configured;
 
-import java.lang.reflect.Field;
-
-
-public class FieldNameKeyGenerator
-    implements KeyGenerator {
+public class FieldNameKeyBuilder
+    implements ConfigurationKeyBuilder {
 
   @Override
-  public String getKey(Object target, Field field) {
-    return field.getName();
+  public String buildKey(Configuration configuration, ConfigurationAttribute attribute) {
+    return attribute.getName();
   }
 
   @Override

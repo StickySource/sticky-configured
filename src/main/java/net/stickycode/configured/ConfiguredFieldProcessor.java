@@ -25,9 +25,9 @@ public class ConfiguredFieldProcessor
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
-  private final ConfigurationSystem configuration;
+  private final ConfigurationRepository configuration;
 
-  public ConfiguredFieldProcessor(ConfigurationSystem configuration) {
+  public ConfiguredFieldProcessor(ConfigurationRepository configuration) {
     super(Configured.class);
     this.configuration = configuration;
   }
@@ -37,7 +37,8 @@ public class ConfiguredFieldProcessor
     if (field.getType().isPrimitive())
       throw new ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException(target, field);
 
-    log.info("registering {} on {}", field, target);
-    configuration.registerField(target, field);
+    ConfiguredField configuredField = new ConfiguredField(target, field);
+    log.info("registering {}", configuredField);
+    configuration.register(configuredField);
   }
 }
