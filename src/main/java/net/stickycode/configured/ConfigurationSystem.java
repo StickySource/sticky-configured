@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
+ * Copyright (c) 2011 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
  * and you may not use this file except in compliance with the Apache License Version 2.0.
@@ -50,13 +50,16 @@ public class ConfigurationSystem {
   }
 
   public void configure() {
+    log.info("configuring system {}", this);
     for (Configuration configuration : configurations)
       configure(configuration);
   }
 
   void configure(Configuration configuration) {
+    log.debug("configuring {}", configuration);
     configuration.preConfigure();
     for (ConfigurationAttribute attribute : configuration) {
+      log.debug("configuring attribute {}", attribute);
       String key = keyBuilder.buildKey(configuration, attribute);
       processAttribute(key, attribute);
     }
@@ -76,7 +79,7 @@ public class ConfigurationSystem {
     }
     else
       if (!field.hasDefaultValue()) {
-        throw new NoConfiguredValueAndNoDefaultValueForAttribute(key, sources);
+        throw new MissingConfigurationException(key, sources);
       }
   }
 

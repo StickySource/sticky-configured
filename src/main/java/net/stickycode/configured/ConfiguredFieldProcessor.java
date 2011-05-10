@@ -25,9 +25,9 @@ public class ConfiguredFieldProcessor
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
-  private final ConfigurationRepository configuration;
+  private final Configuration configuration;
 
-  public ConfiguredFieldProcessor(ConfigurationRepository configuration) {
+  public ConfiguredFieldProcessor(Configuration configuration) {
     super(Configured.class);
     this.configuration = configuration;
   }
@@ -39,6 +39,6 @@ public class ConfiguredFieldProcessor
 
     ConfiguredField configuredField = new ConfiguredField(target, field);
     log.info("registering {}", configuredField);
-    configuration.register(configuredField);
+    configuration.addAttribute(configuredField);
   }
 }

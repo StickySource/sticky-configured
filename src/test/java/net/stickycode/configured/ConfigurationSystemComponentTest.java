@@ -71,7 +71,7 @@ public class ConfigurationSystemComponentTest {
     assertThat(configurationSystem.lookupValue("a")).isNull();
   }
 
-  @Test(expected=NoConfiguredValueAndNoDefaultValueForAttribute.class)
+  @Test(expected=MissingConfigurationException.class)
   public void missingConfigurationExcepts() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());

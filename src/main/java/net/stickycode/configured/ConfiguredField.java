@@ -124,4 +124,9 @@ public class ConfiguredField
     return String.format("ConfiguredField{'%s' on '%s'}", getName(), getCategory());
   }
 
+  @Override
+  public Object getTarget() {
+    return target;
+  }
+
 }

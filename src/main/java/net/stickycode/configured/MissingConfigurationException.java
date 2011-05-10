@@ -18,10 +18,10 @@ import net.stickycode.exception.PermanentException;
 
 
 @SuppressWarnings("serial")
-public class NoConfiguredValueAndNoDefaultValueForAttribute
+public class MissingConfigurationException
     extends PermanentException {
 
-  public NoConfiguredValueAndNoDefaultValueForAttribute(String key, Collection<ConfigurationSource> sources) {
+  public MissingConfigurationException(String key, Collection<ConfigurationSource> sources) {
     super("A value for '{}' could not be found in '{}'", key, sources);
   }
 
