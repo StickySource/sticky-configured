@@ -29,7 +29,7 @@ public class ConfiguredFieldProcessorTest {
   int primitive;
 
   @Mock
-  private Configuration configuration;
+  private ConfiguredConfiguration configuration;
 
   @Before
   public void setup() {

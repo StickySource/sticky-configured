@@ -25,9 +25,9 @@ public class ConfiguredFieldProcessor
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
-  private final Configuration configuration;
+  private final ConfiguredConfiguration configuration;
 
-  public ConfiguredFieldProcessor(Configuration configuration) {
+  public ConfiguredFieldProcessor(ConfiguredConfiguration configuration) {
     super(Configured.class);
     this.configuration = configuration;
   }

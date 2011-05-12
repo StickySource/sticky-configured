@@ -18,6 +18,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.stickycode.reflector.Reflector;
+import net.stickycode.stereotype.PostConfigured;
+import net.stickycode.stereotype.PreConfigured;
+
 public class ConfiguredConfiguration
     implements Configuration {
 
@@ -35,10 +39,16 @@ public class ConfiguredConfiguration
 
   @Override
   public void preConfigure() {
+    new Reflector()
+    .forEachMethod(new InvokingAnnotatedMethodProcessor(PreConfigured.class))
+    .process(target);
   }
 
   @Override
   public void postConfigure() {
+    new Reflector()
+    .forEachMethod(new InvokingAnnotatedMethodProcessor(PostConfigured.class))
+    .process(target);
   }
 
   @Override
@@ -46,16 +56,15 @@ public class ConfiguredConfiguration
     return target.getClass();
   }
 
-  @Override
   public void addAttribute(ConfigurationAttribute attribute) {
     attributes.add(attribute);
   }
 
-  @Override
-  public boolean hasTarget(Object target) {
-    // only want to configure the instance that was registered
-    return this.target == target;
-  }
+//  @Override
+//  public boolean hasTarget(Object target) {
+//    // only want to configure the instance that was registered
+//    return this.target == target;
+//  }
 
   @Override
   public String toString() {

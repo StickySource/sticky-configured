@@ -84,13 +84,15 @@ public class ConfigurationSystem {
   }
 
   /**
-   * @return the value to use or null one is not defined in any configuration
+   * @return the value to use or null one is not defined in any configuration source
    */
   String lookupValue(String key) {
     for (ConfigurationSource s : sources) {
       if (s.hasValue(key))
         return s.getValue(key);
     }
+
+    log.debug("value not found for key '{}'", key);
 
     return null;
   }

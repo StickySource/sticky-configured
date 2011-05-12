@@ -41,9 +41,9 @@ public class ConfiguredField
     return getValue(target, field);
   }
 
-  public String getCategory() {
-    return Introspector.decapitalize(target.getClass().getSimpleName());
-  }
+//  public String getCategory() {
+//    return Introspector.decapitalize(target.getClass().getSimpleName());
+//  }
 
   @Override
   public Class<?> getType() {
@@ -121,12 +121,7 @@ public class ConfiguredField
 
   @Override
   public String toString() {
-    return String.format("ConfiguredField{'%s' on '%s'}", getName(), getCategory());
-  }
-
-  @Override
-  public Object getTarget() {
-    return target;
+    return getName();
   }
 
 }

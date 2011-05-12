@@ -45,7 +45,7 @@ public class ConfiguredFieldTest {
     assertThat(f.getDefaultValue()).isEqualTo("blah");
     assertThat(f.getValue()).isEqualTo("blah");
     assertThat(f.getName()).isEqualTo("defaulted");
-    assertThat(f.getCategory()).isEqualTo("oneField");
+//    assertThat(f.getCategory()).isEqualTo("oneField");
   }
 
   @Test
