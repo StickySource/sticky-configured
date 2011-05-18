@@ -38,11 +38,8 @@ public class ConfigurationSystem {
   @Inject
   private ConfigurationRepository configurations;
 
-  private final ConfigurationKeyBuilder keyBuilder;
-
-  public ConfigurationSystem() {
-    this.keyBuilder = new SimpleNameDotFieldKeyGenerator();
-  }
+  @Inject
+  private ConfigurationKeyBuilder keyBuilder;
 
   @PostConstruct
   public void initialise() {

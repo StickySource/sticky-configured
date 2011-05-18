@@ -42,6 +42,9 @@ public class ConfigurationSystemComponentTest {
   ConfigurationAttribute attribute;
 
   @Spy
+  ConfigurationKeyBuilder builder = new SimpleNameDotFieldConfigurationKeyBuilder();
+
+  @Spy
   Coercions coercions = new Coercions();
 
   @InjectMocks

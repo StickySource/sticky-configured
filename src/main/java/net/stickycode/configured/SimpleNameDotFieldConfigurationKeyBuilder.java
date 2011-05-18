@@ -13,7 +13,7 @@
 package net.stickycode.configured;
 
 
-public class SimpleNameDotFieldKeyGenerator
+public class SimpleNameDotFieldConfigurationKeyBuilder
     implements ConfigurationKeyBuilder {
 
   @Override
