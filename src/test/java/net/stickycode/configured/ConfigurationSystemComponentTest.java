@@ -74,6 +74,7 @@ public class ConfigurationSystemComponentTest {
     assertThat(configurationSystem.lookupValue("a")).isNull();
   }
 
+  @SuppressWarnings("rawtypes")
   @Test(expected=MissingConfigurationException.class)
   public void missingConfigurationExcepts() {
     ConfigurationSource s = mock(ConfigurationSource.class);

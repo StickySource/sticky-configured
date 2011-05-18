@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 
 public class AroundConfiguredMethodInvocationTest {
 
-  private static class Sample {
+  static class Sample {
 
     @Configured
     String noDefault;
