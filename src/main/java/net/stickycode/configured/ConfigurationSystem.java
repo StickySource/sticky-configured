@@ -47,20 +47,28 @@ public class ConfigurationSystem {
   }
 
   public void configure() {
+    log.debug("preconfiguring system {}", this);
+    for (Configuration configuration : configurations)
+      configuration.preConfigure();
+
     log.info("configuring system {}", this);
     for (Configuration configuration : configurations)
       configure(configuration);
+    
+    log.debug("postconfiguring system {}", this);
+    for (Configuration configuration : configurations)
+      configuration.postConfigure();
+    
+    log.info("configured {}", this);
   }
 
   void configure(Configuration configuration) {
     log.debug("configuring {}", configuration);
-    configuration.preConfigure();
     for (ConfigurationAttribute attribute : configuration) {
       log.debug("configuring attribute {}", attribute);
       String key = keyBuilder.buildKey(configuration, attribute);
       processAttribute(key, attribute);
     }
-    configuration.postConfigure();
   }
 
   void processAttribute(String key, ConfigurationAttribute field) {
@@ -92,6 +100,11 @@ public class ConfigurationSystem {
     log.debug("value not found for key '{}'", key);
 
     return null;
+  }
+  
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
   }
 
 }
