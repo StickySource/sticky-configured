@@ -43,7 +43,7 @@ public class ConfigurationSystem {
 
   @PostConstruct
   public void initialise() {
-    log.info("Initialising configuration with configuration sources {} and coercions {}", keyBuilder, coercions);
+    log.info("Initialising configuration building keys with {} with configuration sources {} and coercions {}", new Object[] {keyBuilder, sources, coercions});
   }
 
   public void configure() {
