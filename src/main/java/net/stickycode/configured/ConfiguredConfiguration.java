@@ -60,12 +60,6 @@ public class ConfiguredConfiguration
     attributes.add(attribute);
   }
 
-//  @Override
-//  public boolean hasTarget(Object target) {
-//    // only want to configure the instance that was registered
-//    return this.target == target;
-//  }
-
   @Override
   public String toString() {
     return String.format("ConfigurationConfiguration(%s,%s)", getName(), attributes);

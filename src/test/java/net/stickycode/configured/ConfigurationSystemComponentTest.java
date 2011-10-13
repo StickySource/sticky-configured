@@ -38,6 +38,10 @@ public class ConfigurationSystemComponentTest {
   @Mock
   Set<ConfigurationSource> source;
 
+  @Spy
+  @InjectMocks
+  ConfigurationSources sources = new ConfigurationSources();
+  
   @Mock
   ConfigurationAttribute attribute;
 
@@ -64,14 +68,14 @@ public class ConfigurationSystemComponentTest {
     when(s.hasValue("a")).thenReturn(true);
     when(s.getValue("a")).thenReturn("a");
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    assertThat(configurationSystem.lookupValue("a")).isEqualTo("a");
+    assertThat(sources.lookupValue("a")).isEqualTo("a");
   }
 
   @Test
   public void lookupValueNotFoundIsNull() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    assertThat(configurationSystem.lookupValue("a")).isNull();
+    assertThat(sources.lookupValue("a")).isNull();
   }
 
   @SuppressWarnings("rawtypes")

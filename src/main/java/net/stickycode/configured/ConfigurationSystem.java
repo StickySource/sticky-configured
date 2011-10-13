@@ -12,17 +12,15 @@
  */
 package net.stickycode.configured;
 
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.stereotype.StickyComponent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @StickyComponent
 public class ConfigurationSystem {
@@ -30,7 +28,7 @@ public class ConfigurationSystem {
   private Logger log = LoggerFactory.getLogger(getClass());
 
   @Inject
-  private Set<ConfigurationSource> sources;
+  private ConfigurationSources sources;
 
   @Inject
   private CoercionFinder coercions;
@@ -47,6 +45,9 @@ public class ConfigurationSystem {
   }
 
   public void configure() {
+    log.debug("resolving configuration sources");
+    sources.resolve(configurations);
+    
     log.debug("preconfiguring system {}", this);
     for (Configuration configuration : configurations)
       configuration.preConfigure();
@@ -76,7 +77,7 @@ public class ConfigurationSystem {
     // that a look up failure given there is a reasonable chance
     // that configuration is looked up externally
     Coercion<?> coercion = coercions.find(field);
-    String value = lookupValue(key);
+    String value = sources.lookupValue(key);
 
     // a null value means not configuration was found so do not set it
     if (value != null) {
@@ -88,20 +89,6 @@ public class ConfigurationSystem {
       }
   }
 
-  /**
-   * @return the value to use or null one is not defined in any configuration source
-   */
-  String lookupValue(String key) {
-    for (ConfigurationSource s : sources) {
-      if (s.hasValue(key))
-        return s.getValue(key);
-    }
-
-    log.debug("value not found for key '{}'", key);
-
-    return null;
-  }
-  
   @Override
   public String toString() {
     return getClass().getSimpleName();

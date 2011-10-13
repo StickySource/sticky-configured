@@ -12,8 +12,6 @@
  */
 package net.stickycode.configured;
 
-import java.util.Collection;
-
 import net.stickycode.exception.PermanentException;
 
 
@@ -21,7 +19,7 @@ import net.stickycode.exception.PermanentException;
 public class MissingConfigurationException
     extends PermanentException {
 
-  public MissingConfigurationException(String key, Collection<ConfigurationSource> sources) {
+  public MissingConfigurationException(String key, ConfigurationSources sources) {
     super("A value for '{}' could not be found in '{}'", key, sources);
   }
 
