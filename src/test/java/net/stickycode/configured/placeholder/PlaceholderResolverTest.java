@@ -19,8 +19,9 @@ public class PlaceholderResolverTest {
   @Before
   public void before() {
     when(manifest.lookupValue("key")).thenReturn("value");
+    when(manifest.lookupValue("nested")).thenReturn("key");
   }
-  
+
   @Test
   public void identity() {
     assertThat(resolve("abcde")).isEqualTo("abcde");
@@ -29,7 +30,7 @@ public class PlaceholderResolverTest {
     assertThat(resolve("ab${cde")).isEqualTo("ab${cde");
     assertThat(resolve("ab}${cde")).isEqualTo("ab}${cde");
   }
-  
+
   @Test
   public void onePlaceholder() {
     assertThat(resolve("${key}")).isEqualTo("value");
@@ -38,14 +39,27 @@ public class PlaceholderResolverTest {
     assertThat(resolve(" ${key} ")).isEqualTo(" value ");
     assertThat(resolve("key ${key} key value")).isEqualTo("key value key value");
   }
-  
+
   @Test
   public void twoPlaceholders() {
     assertThat(resolve("${key}${key}")).isEqualTo("valuevalue");
     assertThat(resolve("${key} ${key}")).isEqualTo("value value");
-    assertThat(resolve(" ${key}$[key}")).isEqualTo(" valuevalue");
-    assertThat(resolve(" ${key}${key} ")).isEqualTo(" valuevalue ");
+    assertThat(resolve(" ${key}${key}")).isEqualTo(" valuevalue");
+    assertThat(resolve(" ${key} ${key} ")).isEqualTo(" value value ");
     assertThat(resolve("key ${key} key ${key}value")).isEqualTo("key value key valuevalue");
+  }
+
+  @Test
+  public void manyPlaceholders() {
+    assertThat(resolve("${key}${key}${key}")).isEqualTo("valuevaluevalue");
+    assertThat(resolve("${key} ${key} ${key}")).isEqualTo("value value value");
+    assertThat(resolve(" ${key}${key}${key}")).isEqualTo(" valuevaluevalue");
+    assertThat(resolve(" ${key} ${key} ${key} ")).isEqualTo(" value value value ");
+  }
+
+  @Test
+  public void nestedPlaceholders() {
+    assertThat(resolve("${${nested}}")).isEqualTo("value");
   }
 
   private String resolve(String string) {

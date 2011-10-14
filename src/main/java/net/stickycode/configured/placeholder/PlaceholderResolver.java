@@ -1,7 +1,7 @@
 package net.stickycode.configured.placeholder;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.stickycode.configured.ConfigurationManifest;
 
@@ -23,8 +23,7 @@ public class PlaceholderResolver {
       return resolution.withValue(value);
     
     String lookup = manifest.lookupValue(placeholder.getKey());
-    
-    return resolution.withValue(placeholder.replace(lookup));
+    return resolve(placeholder.replace(lookup), resolution);
   }
 
   private Placeholder find(String value) {
