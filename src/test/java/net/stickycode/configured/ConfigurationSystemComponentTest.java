@@ -12,8 +12,16 @@
  */
 package net.stickycode.configured;
 
+import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 import java.util.Set;
+
+import net.stickycode.coercion.Coercions;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,16 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import net.stickycode.coercion.Coercions;
-
-import static org.mockito.Mockito.times;
-
-import static org.mockito.Mockito.verify;
-
-import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationSystemComponentTest {
@@ -40,10 +38,13 @@ public class ConfigurationSystemComponentTest {
 
   @Spy
   @InjectMocks
-  ConfigurationSources sources = new ConfigurationSources();
+  ConfigurationManifest sources = new ConfigurationManifest();
   
   @Mock
   ConfigurationAttribute attribute;
+  
+  @Mock
+  Configuration configuration;
 
   @Spy
   ConfigurationKeyBuilder builder = new SimpleNameDotFieldConfigurationKeyBuilder();
@@ -51,16 +52,11 @@ public class ConfigurationSystemComponentTest {
   @Spy
   Coercions coercions = new Coercions();
 
+  @Mock
+  ConfigurationRepository repository;
+
   @InjectMocks
   ConfigurationSystem configurationSystem = new ConfigurationSystem();
-
-  @SuppressWarnings("unused")
-  private static class OneField {
-
-    private String noDefault;
-    private String defaulted = "blah";
-    private OneField noCoercion;
-  }
 
   @Test
   public void lookupValue() {
@@ -78,24 +74,36 @@ public class ConfigurationSystemComponentTest {
     assertThat(sources.lookupValue("a")).isNull();
   }
 
-  @SuppressWarnings("rawtypes")
-  @Test(expected=MissingConfigurationException.class)
+  @Test(expected = MissingConfigurationException.class)
   public void missingConfigurationExcepts() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
+    
+    mockConfiguration();
+
+    configurationSystem.processAttribute("bean.field", attribute);
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void mockConfiguration() {
     when((Class)attribute.getType()).thenReturn((Class) String.class);
-    configurationSystem.processAttribute("a", attribute);
+    when(configuration.getName()).thenReturn("bean");
+    when(attribute.getName()).thenReturn("field");
+    when(repository.iterator()).thenReturn(Collections.singleton(configuration).iterator());
+    when(configuration.iterator()).thenReturn(Collections.singleton(attribute).iterator());
+    sources.resolve(repository);
   }
 
   @Test
-  @SuppressWarnings("rawtypes")
   public void processAttribute() {
     ConfigurationSource s = mock(ConfigurationSource.class);
-    when(s.hasValue("a")).thenReturn(true);
-    when(s.getValue("a")).thenReturn("a");
+    when(s.hasValue("bean.field")).thenReturn(true);
+    when(s.getValue("bean.field")).thenReturn("a");
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    when((Class)attribute.getType()).thenReturn((Class) String.class);
-    configurationSystem.processAttribute("a", attribute);
+
+    mockConfiguration();
+
+    configurationSystem.processAttribute("bean.field", attribute);
     verify(attribute).setValue("a");
   }
 
@@ -104,9 +112,9 @@ public class ConfigurationSystemComponentTest {
   public void leaveDefaultValue() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    when((Class)attribute.getType()).thenReturn((Class) String.class);
     when(attribute.hasDefaultValue()).thenReturn(true);
-    configurationSystem.processAttribute("a", attribute);
+    mockConfiguration();
+    configurationSystem.processAttribute("bean.field", attribute);
     verify(attribute, times(0)).setValue("a");
   }
 }

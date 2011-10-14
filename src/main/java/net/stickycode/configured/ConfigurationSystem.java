@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
+import net.stickycode.configured.placeholder.ResolvedValue;
 import net.stickycode.stereotype.StickyComponent;
 
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ConfigurationSystem {
   private Logger log = LoggerFactory.getLogger(getClass());
 
   @Inject
-  private ConfigurationSources sources;
+  private ConfigurationManifest sources;
 
   @Inject
   private CoercionFinder coercions;
@@ -77,11 +78,15 @@ public class ConfigurationSystem {
     // that a look up failure given there is a reasonable chance
     // that configuration is looked up externally
     Coercion<?> coercion = coercions.find(field);
-    String value = sources.lookupValue(key);
+    ResolvedValue value = sources.find(key);
 
-    // a null value means not configuration was found so do not set it
-    if (value != null) {
-      field.setValue(coercion.coerce(field, value));
+    // if we have not resolved a value then don't set it
+    // the implication is that if the configuration is reloaded and 
+    // we no longer have a value that it does not get unset
+    // but the general assumption is that all configured fields _must_ have a value
+    // so thats ok
+    if (value.isResolved()) {
+      field.setValue(coercion.coerce(field, value.getValue()));
     }
     else
       if (!field.hasDefaultValue()) {
