@@ -20,6 +20,10 @@ public class PlaceholderResolverTest {
   public void before() {
     when(manifest.lookupValue("key")).thenReturn("value");
     when(manifest.lookupValue("nested")).thenReturn("key");
+    when(manifest.lookupValue("keykey")).thenReturn("value");
+    when(manifest.lookupValue("loop")).thenReturn("${loop}");
+    when(manifest.lookupValue("cycle")).thenReturn("cycle");
+    when(manifest.lookupValue("deeploop")).thenReturn("${loop}");
   }
 
   @Test
@@ -60,6 +64,23 @@ public class PlaceholderResolverTest {
   @Test
   public void nestedPlaceholders() {
     assertThat(resolve("${${nested}}")).isEqualTo("value");
+    assertThat(resolve("${${nested}${nested}}")).isEqualTo("value");
+  }
+
+  @Test(expected=KeyAlreadySeenDuringPlaceholderResolutionException.class)
+  public void nestedPlaceholdersWithCycle() {
+   resolve("${${loop}}");
+  }
+  
+  @Test(expected=KeyAlreadySeenDuringPlaceholderResolutionException.class)
+  public void nestedPlaceholdersWithDeepCycle() {
+    resolve("${deeploop}");
+  }
+
+  @Test
+  public void nestedPlaceholdersWithCycle2() {
+    assertThat(resolve("${cycle}")).isEqualTo("cycle");
+    assertThat(resolve("${${cycle}}")).isEqualTo("cycle");
   }
 
   private String resolve(String string) {

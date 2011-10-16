@@ -36,4 +36,23 @@ public class FoundPlaceholder
     return value.substring(0, start) + lookup + value.substring(end + 1);
   }
 
+  @Override
+  public boolean contains(Placeholder placeholder) {
+    if (placeholder.getStart() >= start)
+      if (placeholder.getEnd() <= end)
+        return placeholder.getKey().equals(getKey());
+
+    return false;
+  }
+
+  @Override
+  public int getStart() {
+    return start;
+  }
+
+  @Override
+  public int getEnd() {
+    return end;
+  }
+
 }

@@ -34,7 +34,7 @@ public class ResolvedValue {
 
   @Override
   public String toString() {
-    return isResolved() ? value : "<undefined>";
+    return key + "=" + seed + "=>" + (isResolved() ? value : "<undefined>");
   }
 
   public ResolvedValue withValue(String value2) {
