@@ -41,11 +41,10 @@ public class PlaceholderResolver {
         throw new KeyAlreadySeenDuringPlaceholderResolutionException(placeholder, resolution);
     }
 
-    seen.push(placeholder);
     String lookup = manifest.lookupValue(placeholder.getKey());
 
+    seen.push(placeholder);
     ResolvedValue resolve = resolve(placeholder.replace(lookup), resolution, seen);
-
     seen.pop();
     return resolve;
   }

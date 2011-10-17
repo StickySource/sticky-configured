@@ -19,11 +19,6 @@ public class PlaceholderResolverTest {
   @Before
   public void before() {
     when(manifest.lookupValue("key")).thenReturn("value");
-    when(manifest.lookupValue("nested")).thenReturn("key");
-    when(manifest.lookupValue("keykey")).thenReturn("value");
-    when(manifest.lookupValue("loop")).thenReturn("${loop}");
-    when(manifest.lookupValue("cycle")).thenReturn("cycle");
-    when(manifest.lookupValue("deeploop")).thenReturn("${loop}");
   }
 
   @Test
@@ -63,22 +58,35 @@ public class PlaceholderResolverTest {
 
   @Test
   public void nestedPlaceholders() {
+    when(manifest.lookupValue("nested")).thenReturn("key");
+    when(manifest.lookupValue("keykey")).thenReturn("value");
+    
     assertThat(resolve("${${nested}}")).isEqualTo("value");
     assertThat(resolve("${${nested}${nested}}")).isEqualTo("value");
   }
 
   @Test(expected=KeyAlreadySeenDuringPlaceholderResolutionException.class)
   public void nestedPlaceholdersWithCycle() {
+    when(manifest.lookupValue("loop")).thenReturn("${loop}");
    resolve("${${loop}}");
   }
   
   @Test(expected=KeyAlreadySeenDuringPlaceholderResolutionException.class)
   public void nestedPlaceholdersWithDeepCycle() {
+    when(manifest.lookupValue("loop")).thenReturn("${loop}");
+    when(manifest.lookupValue("deeploop")).thenReturn("${loop}");
     resolve("${deeploop}");
+  }
+  
+  @Test(expected=KeyAlreadySeenDuringPlaceholderResolutionException.class, timeout=100)
+  public void nestedPlaceholdersWithOffsetLoop() {
+    when(manifest.lookupValue("offsetloop")).thenReturn(" ${offsetloop}");
+    resolve("${offsetloop}");
   }
 
   @Test
   public void nestedPlaceholdersWithCycle2() {
+    when(manifest.lookupValue("cycle")).thenReturn("cycle");
     assertThat(resolve("${cycle}")).isEqualTo("cycle");
     assertThat(resolve("${${cycle}}")).isEqualTo("cycle");
   }

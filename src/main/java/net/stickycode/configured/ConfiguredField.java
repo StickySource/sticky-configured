@@ -40,10 +40,6 @@ public class ConfiguredField
     return getValue(target, field);
   }
 
-//  public String getCategory() {
-//    return Introspector.decapitalize(target.getClass().getSimpleName());
-//  }
-
   @Override
   public Class<?> getType() {
     return field.getType();

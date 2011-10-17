@@ -15,8 +15,6 @@ public class ResolvedValue {
 
   private String value;
 
-  /** Create an unresolved value 
-   * @param seed2 */
   public ResolvedValue(Configuration configuration, ConfigurationAttribute attribute, String key, String seed2) {
     this.configuration = configuration;
     this.attribute = attribute;

@@ -58,4 +58,5 @@ public class ConfigurationManifest {
   public ResolvedValue find(String key) {
     return resolved.get(key);
   }
+  
 }
