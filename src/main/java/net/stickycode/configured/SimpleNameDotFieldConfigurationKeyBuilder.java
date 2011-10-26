@@ -28,4 +28,11 @@ public class SimpleNameDotFieldConfigurationKeyBuilder
     return getClass().getSimpleName();
   }
 
+  @Override
+  public String build(ConfigurationKeyElement group, ConfigurationKeyElement name) {
+    return group.getName()
+        + "." +
+        name.getName();
+  }
+
 }

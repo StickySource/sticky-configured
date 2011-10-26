@@ -25,4 +25,9 @@ public class FieldNameKeyBuilder
     return getClass().getSimpleName();
   }
 
+  @Override
+  public String build(ConfigurationKeyElement group, ConfigurationKeyElement name) {
+    return name.getName();
+  }
+
 }

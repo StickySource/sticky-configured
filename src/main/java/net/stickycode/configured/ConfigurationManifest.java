@@ -31,7 +31,7 @@ public class ConfigurationManifest {
     Map<String, ResolvedValue> resolutions = new HashMap<String, ResolvedValue>();
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute a : configuration) {
-        String key = keyBuilder.buildKey(configuration, a);
+        String key = keyBuilder.build(configuration, a);
         String seed = lookupValue(key);
         log.debug("resolving key '{}' with seed '{}'", key, seed);
         resolutions.put(key, resolver.resolve(seed, new ResolvedValue(configuration, a, key, seed)));
