@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
+import net.stickycode.configured.content.ContentResolver;
 import net.stickycode.configured.placeholder.ResolvedValue;
 import net.stickycode.stereotype.StickyComponent;
 
@@ -30,15 +31,18 @@ public class ConfigurationSystem {
 
   @Inject
   private ConfigurationManifest sources;
-
+  
   @Inject
   private CoercionFinder coercions;
 
   @Inject
   private ConfigurationRepository configurations;
-
+  
   @Inject
   private ConfigurationKeyBuilder keyBuilder;
+  
+  @Inject
+  private ContentResolver contentResolver;
 
   @PostConstruct
   public void initialise() {
@@ -53,7 +57,11 @@ public class ConfigurationSystem {
     for (Configuration configuration : configurations)
       configuration.preConfigure();
 
-    log.info("configuring system {}", this);
+    log.info("configuring {}", this);
+    for (Configuration configuration : configurations)
+      configure(configuration);
+    
+    log.info("configuring content {}", this);
     for (Configuration configuration : configurations)
       configure(configuration);
     
@@ -68,7 +76,7 @@ public class ConfigurationSystem {
     log.debug("configuring {}", configuration);
     for (ConfigurationAttribute attribute : configuration) {
       log.debug("configuring attribute {}", attribute);
-      String key = keyBuilder.buildKey(configuration, attribute);
+      String key = keyBuilder.build(configuration, attribute);
       processAttribute(key, attribute);
     }
   }
