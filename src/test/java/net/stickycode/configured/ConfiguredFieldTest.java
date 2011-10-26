@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import net.stickycode.coercion.Coercion;
+import net.stickycode.reflector.TriedToAccessFieldButWasDeniedException;
 
 import static org.fest.assertions.Assertions.assertThat;
 

@@ -17,6 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import net.stickycode.coercion.AbstractCoercionType;
+import net.stickycode.reflector.Fields;
 
 public class ConfiguredField
     extends AbstractCoercionType
@@ -50,49 +51,11 @@ public class ConfiguredField
   }
 
   private Object getValue(Object target, Field field) {
-    boolean accessible = field.isAccessible();
-    try {
-      field.setAccessible(true);
-      return safeGetField(target, field);
-    }
-    finally {
-      field.setAccessible(accessible);
-    }
-  }
-
-  private Object safeGetField(Object target, Field field) {
-    try {
-      return field.get(target);
-    }
-    catch (IllegalArgumentException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
-    catch (IllegalAccessException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
+    return Fields.get(target, field);
   }
 
   public void setValue(Object value) {
-    boolean accessible = field.isAccessible();
-    field.setAccessible(true);
-    try {
-      safeSetValue(value);
-    }
-    finally {
-      field.setAccessible(accessible);
-    }
-  }
-
-  private void safeSetValue(Object value) {
-    try {
-      field.set(target, value);
-    }
-    catch (IllegalArgumentException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
-    catch (IllegalAccessException e) {
-      throw new TriedToAccessFieldButWasDeniedException(e, field, target);
-    }
+    Fields.set(target, field, value);
   }
 
   @Override

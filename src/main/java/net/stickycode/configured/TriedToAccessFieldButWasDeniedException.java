@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import net.stickycode.exception.PermanentException;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class TriedToAccessFieldButWasDeniedException
     extends PermanentException {
 
