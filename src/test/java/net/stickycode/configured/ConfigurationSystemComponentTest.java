@@ -56,7 +56,7 @@ public class ConfigurationSystemComponentTest {
   ConfigurationRepository repository;
 
   @InjectMocks
-  ConfigurationSystem configurationSystem = new ConfigurationSystem();
+  ConfiguredConfigurationListener configurationSystem = new ConfiguredConfigurationListener();
 
   @Test
   public void lookupValue() {
