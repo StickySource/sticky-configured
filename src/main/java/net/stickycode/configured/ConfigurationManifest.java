@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import net.stickycode.configured.placeholder.PlaceholderResolver;
@@ -24,7 +25,17 @@ public class ConfigurationManifest {
   @Inject
   private ConfigurationKeyBuilder keyBuilder;
 
+  private String environment = System.getProperty("env");
+
   private Map<String, ResolvedValue> resolved;
+
+  @PostConstruct
+  public void startup() {
+    if (environment != null)
+      log.info("Using environment {} when resolving configuration", environment);
+    else
+      log.debug("No environment is specified for resolving configuration");
+  }
 
   public void resolve(ConfigurationRepository configurations) {
     PlaceholderResolver resolver = new PlaceholderResolver(this);
@@ -46,6 +57,10 @@ public class ConfigurationManifest {
    */
   public String lookupValue(String key) {
     for (ConfigurationSource s : sources) {
+      if (environment != null)
+        if (s.hasValue(environment + "." + key))
+          return s.getValue(environment + "." + key);
+
       if (s.hasValue(key))
         return s.getValue(key);
     }
@@ -59,4 +74,9 @@ public class ConfigurationManifest {
     return resolved.get(key);
   }
   
+  @Override
+  public String toString() {
+    return sources.toString();
+  }
+
 }
