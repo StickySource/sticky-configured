@@ -108,7 +108,6 @@ public class ConfigurationSystemComponentTest {
   }
 
   @Test
-  @SuppressWarnings("rawtypes")
   public void leaveDefaultValue() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());

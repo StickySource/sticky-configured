@@ -3,15 +3,16 @@ package net.stickycode.configured.content;
 import javax.inject.Inject;
 
 import net.stickycode.configured.ConfigurationKeyBuilder;
-import net.stickycode.stereotype.PostConfigured;
-import net.stickycode.stereotype.StickyComponent;
+import net.stickycode.configured.ConfigurationListener;
+import net.stickycode.stereotype.StickyPlugin;
 import net.stickycode.stereotype.ui.Content;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@StickyComponent
-public class LocalisedContentSystem {
+@StickyPlugin
+public class LocalisedContentSystem
+    implements ConfigurationListener {
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -22,13 +23,13 @@ public class LocalisedContentSystem {
   private ConfigurationKeyBuilder keyBuilder;
 
   @Inject
-  LocaleProvider localeProvider;
+  private LocaleProvider localeProvider;
 
   @Inject
   private LocalisedContentSource content;
 
-  @PostConfigured
-  public void localise() {
+  @Override
+  public void configure() {
     log.info("localising content {}", this);
     for (LocalisedElement element : localisedElements)
       localise(element);
@@ -56,6 +57,18 @@ public class LocalisedContentSystem {
         }
       });
     }
+  }
+
+  @Override
+  public void resolve() {
+  }
+
+  @Override
+  public void preConfigure() {
+  }
+
+  @Override
+  public void postConfigure() {
   }
 
 }

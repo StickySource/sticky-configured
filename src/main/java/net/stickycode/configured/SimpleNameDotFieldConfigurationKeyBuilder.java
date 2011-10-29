@@ -12,7 +12,9 @@
  */
 package net.stickycode.configured;
 
+import net.stickycode.stereotype.StickyComponent;
 
+@StickyComponent
 public class SimpleNameDotFieldConfigurationKeyBuilder
     implements ConfigurationKeyBuilder {
 
