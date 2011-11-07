@@ -20,33 +20,38 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import net.stickycode.configured.ConfigurationSource;
+import javax.annotation.PostConstruct;
 
-public class StickyApplicationConfigurationSource
-    implements ConfigurationSource {
+import net.stickycode.stereotype.StickyComponent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@StickyComponent
+public class StickyApplicationConfigurationSource {
+
+  private Logger log = LoggerFactory.getLogger(getClass());
 
   private Map<String, String> map = new HashMap<String, String>();
 
-  public StickyApplicationConfigurationSource() {
-    super();
-    loadApplicationConfiguration();
-  }
-
-  @Override
   public boolean hasValue(String key) {
     return map.containsKey(key);
   }
 
-  @Override
   public String getValue(String key) {
     return map.get(key);
   }
 
-  private void loadApplicationConfiguration() {
+  @PostConstruct
+  public void loadApplicationConfiguration() {
     Enumeration<URL> urls = findUrls();
-    if (!urls.hasMoreElements())
-      throw new ApplicationConfigurationNotFoundException(getApplicationConfigurationPath());
+    if (urls.hasMoreElements())
+      loadOnlyOneUrl(urls);
+    else
+      log.warn("application configuration not found at {}", getApplicationConfigurationPath());
+  }
 
+  private void loadOnlyOneUrl(Enumeration<URL> urls) {
     URL url = urls.nextElement();
     if (urls.hasMoreElements())
       throw new ThereCanBeOnlyOneApplicationConfigurationException(url, urls.nextElement());
@@ -86,6 +91,5 @@ public class StickyApplicationConfigurationSource
   protected ClassLoader getClassLoader() {
     return getClass().getClassLoader();
   }
-
 
 }

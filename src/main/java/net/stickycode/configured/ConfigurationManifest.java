@@ -9,6 +9,8 @@ import javax.inject.Inject;
 
 import net.stickycode.configured.placeholder.PlaceholderResolver;
 import net.stickycode.configured.placeholder.ResolvedValue;
+import net.stickycode.configured.source.StickyApplicationConfigurationSource;
+import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
 import net.stickycode.stereotype.StickyComponent;
 
 import org.slf4j.Logger;
@@ -18,6 +20,12 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationManifest {
 
   private Logger log = LoggerFactory.getLogger(getClass());
+
+  @Inject
+  private SystemPropertiesConfigurationSource systemProperties;
+
+  @Inject
+  private StickyApplicationConfigurationSource applicationConfiguration;
 
   @Inject
   private Set<ConfigurationSource> sources;
@@ -56,11 +64,23 @@ public class ConfigurationManifest {
    * @return the value to use or null if one is not defined in any configuration source
    */
   public String lookupValue(String key) {
-    for (ConfigurationSource s : sources) {
-      if (environment != null)
-        if (s.hasValue(environment + "." + key))
-          return s.getValue(environment + "." + key);
+    if (environment != null) {
+      String value = findValueInSources(environment + "." + key);
+      if (value != null)
+        return value;
+    }
 
+    return findValueInSources(key);
+  }
+
+  String findValueInSources(String key) {
+    if (applicationConfiguration.hasValue(key))
+      return applicationConfiguration.getValue(key);
+
+    if (systemProperties.hasValue(key))
+      return systemProperties.getValue(key);
+
+    for (ConfigurationSource s : sources) {
       if (s.hasValue(key))
         return s.getValue(key);
     }
@@ -73,7 +93,7 @@ public class ConfigurationManifest {
   public ResolvedValue find(String key) {
     return resolved.get(key);
   }
-  
+
   @Override
   public String toString() {
     return sources.toString();

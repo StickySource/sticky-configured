@@ -12,20 +12,15 @@
  */
 package net.stickycode.configured.source;
 
-import net.stickycode.configured.ConfigurationSource;
-import net.stickycode.stereotype.StickyPlugin;
+import net.stickycode.stereotype.StickyComponent;
 
+@StickyComponent
+public class SystemPropertiesConfigurationSource {
 
-@StickyPlugin
-public class SystemPropertiesConfigurationSource
-    implements ConfigurationSource {
-
-  @Override
   public boolean hasValue(String key) {
     return System.getProperty(key) != null;
   }
 
-  @Override
   public String getValue(String key) {
     return System.getProperty(key);
   }

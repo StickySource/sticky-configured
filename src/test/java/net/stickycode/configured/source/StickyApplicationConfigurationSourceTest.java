@@ -12,6 +12,8 @@
  */
 package net.stickycode.configured.source;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,21 +23,18 @@ import java.util.Enumeration;
 
 import org.junit.Test;
 
-import net.stickycode.configured.ConfigurationSource;
-
-import static org.fest.assertions.Assertions.assertThat;
-
-
 public class StickyApplicationConfigurationSourceTest {
 
-  @Test(expected=ThereCanBeOnlyOneApplicationConfigurationException.class)
+  @Test(expected = ThereCanBeOnlyOneApplicationConfigurationException.class)
   public void thereCanBeOnlyOneConfiguration() {
     new StickyApplicationConfigurationSource() {
+
       protected ClassLoader getClassLoader() {
         return new ClassLoader() {
+
           @Override
           protected Enumeration<URL> findResources(String name) throws IOException {
-            return Collections.enumeration(Arrays.asList(new URL[] {url(), url()}));
+            return Collections.enumeration(Arrays.asList(new URL[] { url(), url() }));
           }
 
           private URL url() throws MalformedURLException {
@@ -43,17 +42,18 @@ public class StickyApplicationConfigurationSourceTest {
           }
         };
       }
-    };
+    }.loadApplicationConfiguration();
   }
 
-  @Test(expected=ApplicationConfigurationNotFoundException.class)
-  public void applicationConfigurationNotFound() {
+  @Test
+  public void applicationConfigurationNotFoundWarnsOnly() {
     new StickyApplicationConfigurationSource() {
+
       @Override
       protected String getApplicationConfigurationPath() {
         return "no/such/path.properties";
       }
-    };
+    }.loadApplicationConfiguration();
   }
 
   @Test
@@ -68,8 +68,10 @@ public class StickyApplicationConfigurationSourceTest {
     assertThat(source().getValue("application.name")).isEqualTo("sticky");
   }
 
-  private ConfigurationSource source() {
-    return new StickyApplicationConfigurationSource();
+  private StickyApplicationConfigurationSource source() {
+    StickyApplicationConfigurationSource stickyApplicationConfigurationSource = new StickyApplicationConfigurationSource();
+    stickyApplicationConfigurationSource.loadApplicationConfiguration();
+    return stickyApplicationConfigurationSource;
   }
 
 }

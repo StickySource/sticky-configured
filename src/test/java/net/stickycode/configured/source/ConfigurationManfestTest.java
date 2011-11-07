@@ -9,6 +9,7 @@ import java.util.Collections;
 import net.stickycode.configured.ConfigurationManifest;
 import net.stickycode.configured.ConfigurationSource;
 import net.stickycode.reflector.Fields;
+import net.stickycode.stereotype.StickyComponent;
 
 import org.junit.Test;
 
@@ -24,6 +25,12 @@ public class ConfigurationManfestTest {
     manifest = new ConfigurationManifest();
     Field f = ConfigurationManifest.class.getDeclaredField("sources");
     Fields.set(manifest, f, Collections.singleton(source));
+
+    Field fs = ConfigurationManifest.class.getDeclaredField("systemProperties");
+    Fields.set(manifest, fs, mock(SystemPropertiesConfigurationSource.class));
+    
+    Field fp = ConfigurationManifest.class.getDeclaredField("applicationConfiguration");
+    Fields.set(manifest, fp, mock(StickyApplicationConfigurationSource.class));
   }
   
   @Test

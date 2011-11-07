@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.stickycode.coercion.Coercions;
+import net.stickycode.configured.source.StickyApplicationConfigurationSource;
+import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +41,10 @@ public class ConfigurationSystemComponentTest {
   @Spy
   @InjectMocks
   ConfigurationManifest sources = new ConfigurationManifest();
-  
+
   @Mock
   ConfigurationAttribute attribute;
-  
+
   @Mock
   Configuration configuration;
 
@@ -54,6 +56,12 @@ public class ConfigurationSystemComponentTest {
 
   @Mock
   ConfigurationRepository repository;
+
+  @Mock
+  StickyApplicationConfigurationSource applicationSource;
+
+  @Mock
+  SystemPropertiesConfigurationSource systemProperties;
 
   @InjectMocks
   ConfiguredConfigurationListener configurationSystem = new ConfiguredConfigurationListener();
@@ -78,7 +86,7 @@ public class ConfigurationSystemComponentTest {
   public void missingConfigurationExcepts() {
     ConfigurationSource s = mock(ConfigurationSource.class);
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    
+
     mockConfiguration();
 
     configurationSystem.processAttribute("bean.field", attribute);
@@ -86,7 +94,7 @@ public class ConfigurationSystemComponentTest {
 
   @SuppressWarnings("rawtypes")
   private void mockConfiguration() {
-    when((Class)attribute.getType()).thenReturn((Class) String.class);
+    when((Class) attribute.getType()).thenReturn((Class) String.class);
     when(configuration.getName()).thenReturn("bean");
     when(attribute.getName()).thenReturn("field");
     when(repository.iterator()).thenReturn(Collections.singleton(configuration).iterator());

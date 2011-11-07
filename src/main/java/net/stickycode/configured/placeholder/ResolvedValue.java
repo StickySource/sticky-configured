@@ -32,7 +32,7 @@ public class ResolvedValue {
 
   @Override
   public String toString() {
-    return key + "=" + seed + "=>" + (isResolved() ? value : "<undefined>");
+    return seed + "->" + (isResolved() ? value : "<undefined>");
   }
 
   public ResolvedValue withValue(String value2) {
