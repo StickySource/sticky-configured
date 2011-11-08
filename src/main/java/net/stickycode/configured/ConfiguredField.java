@@ -12,6 +12,8 @@
  */
 package net.stickycode.configured;
 
+import static net.stickycode.exception.Preconditions.notNull;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -24,13 +26,15 @@ public class ConfiguredField
     implements ConfigurationAttribute {
 
   private final Object defaultValue;
+
   private final Object target;
+
   private final Field field;
 
   public ConfiguredField(Object target, Field field) {
-    this.defaultValue = getValue(target, field);
-    this.target = target;
-    this.field = field;
+    this.target = notNull(target, "The target bean for a configured field cannot be null");
+    this.field = notNull(field, "A configured field cannot be null");
+    this.defaultValue = getValue();
   }
 
   public Object getDefaultValue() {
@@ -38,7 +42,7 @@ public class ConfiguredField
   }
 
   public Object getValue() {
-    return getValue(target, field);
+    return Fields.get(target, field);
   }
 
   @Override
@@ -48,10 +52,6 @@ public class ConfiguredField
 
   public boolean hasDefaultValue() {
     return defaultValue != null;
-  }
-
-  private Object getValue(Object target, Field field) {
-    return Fields.get(target, field);
   }
 
   public void setValue(Object value) {
