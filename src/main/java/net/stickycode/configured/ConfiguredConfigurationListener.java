@@ -76,7 +76,6 @@ public class ConfiguredConfigurationListener
   void configure(Configuration configuration) {
     log.debug("configuring {}", configuration);
     for (ConfigurationAttribute attribute : configuration) {
-      log.debug("configuring attribute {}", attribute);
       String key = keyBuilder.build(configuration, attribute);
       processAttribute(key, attribute);
     }
