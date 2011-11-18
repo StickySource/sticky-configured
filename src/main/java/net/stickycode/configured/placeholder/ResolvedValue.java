@@ -32,7 +32,13 @@ public class ResolvedValue {
 
   @Override
   public String toString() {
-    return seed + "->" + (isResolved() ? value : "<undefined>");
+    if (!isResolved())
+      return seed + " is undefined";
+    
+    if (seed.equals(value))
+      return seed;
+    
+    return seed + "->" + value;
   }
 
   public ResolvedValue withValue(String value2) {
