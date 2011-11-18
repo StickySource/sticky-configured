@@ -14,6 +14,7 @@ package net.stickycode.configured;
 
 import static net.stickycode.exception.Preconditions.notNull;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -80,6 +81,11 @@ public class ConfiguredField
   @Override
   public String toString() {
     return getName();
+  }
+
+  @Override
+  public boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
+    return field.isAnnotationPresent(annotationClass);
   }
 
 }

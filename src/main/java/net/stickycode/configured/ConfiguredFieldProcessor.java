@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import net.stickycode.reflector.AnnotatedFieldProcessor;
 import net.stickycode.stereotype.Configured;
+import net.stickycode.stereotype.ConfiguredStrategy;
 
 public class ConfiguredFieldProcessor
     extends AnnotatedFieldProcessor {
@@ -28,7 +29,7 @@ public class ConfiguredFieldProcessor
   private final ConfiguredConfiguration configuration;
 
   public ConfiguredFieldProcessor(ConfiguredConfiguration configuration) {
-    super(Configured.class);
+    super(Configured.class, ConfiguredStrategy.class);
     this.configuration = configuration;
   }
 
