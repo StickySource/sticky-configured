@@ -12,6 +12,8 @@
  */
 package net.stickycode.configured;
 
+import static net.stickycode.exception.Preconditions.notNull;
+
 import java.beans.Introspector;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,10 +28,11 @@ public class ConfiguredConfiguration
     implements Configuration {
 
   private final Object target;
+
   private final List<ConfigurationAttribute> attributes = new ArrayList<ConfigurationAttribute>();
 
   public ConfiguredConfiguration(Object instance) {
-    this.target = instance;
+    this.target = notNull(instance, "The target object of configuration should not be null");
   }
 
   @Override
@@ -40,15 +43,15 @@ public class ConfiguredConfiguration
   @Override
   public void preConfigure() {
     new Reflector()
-    .forEachMethod(new InvokingAnnotatedMethodProcessor(PreConfigured.class))
-    .process(target);
+        .forEachMethod(new InvokingAnnotatedMethodProcessor(PreConfigured.class))
+        .process(target);
   }
 
   @Override
   public void postConfigure() {
     new Reflector()
-    .forEachMethod(new InvokingAnnotatedMethodProcessor(PostConfigured.class))
-    .process(target);
+        .forEachMethod(new InvokingAnnotatedMethodProcessor(PostConfigured.class))
+        .process(target);
   }
 
   @Override
