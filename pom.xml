@@ -46,18 +46,18 @@
 		<dependency>
 			<groupId>net.stickycode.configured</groupId>
 			<artifactId>sticky-configured-api</artifactId>
-			<version>[2,3)</version>
+			<version>[2.4,3)</version>
 		</dependency>
 
 		<dependency>
 			<groupId>net.stickycode</groupId>
 			<artifactId>sticky-coercion</artifactId>
-			<version>[3.1,4)</version>
+			<version>[3.4,4)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode</groupId>
 			<artifactId>sticky-reflector</artifactId>
-			<version>[1.5,2)</version>
+			<version>[1.8,2)</version>
 		</dependency>
 	</dependencies>
 </project>
