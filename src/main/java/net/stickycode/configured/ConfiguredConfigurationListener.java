@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
+import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.configured.placeholder.ResolvedValue;
 import net.stickycode.stereotype.StickyPlugin;
 
@@ -46,12 +47,12 @@ public class ConfiguredConfigurationListener
     log.info("Initialising configuration building keys with {} with configuration sources {} and coercions {}", new Object[] {
         keyBuilder, sources, coercions });
   }
-  
+
   public void resolve() {
     log.debug("resolving configuration sources");
     sources.resolve(configurations);
   }
-  
+
   public void preConfigure() {
     log.debug("preconfiguring system {}", this);
     for (Configuration configuration : configurations)
@@ -72,7 +73,6 @@ public class ConfiguredConfigurationListener
     log.info("configured {}", this);
   }
 
-
   void configure(Configuration configuration) {
     log.debug("configuring {}", configuration);
     for (ConfigurationAttribute attribute : configuration) {
@@ -85,7 +85,8 @@ public class ConfiguredConfigurationListener
     // try to find the coercion first as this failure is cheaper
     // that a look up failure given there is a reasonable chance
     // that configuration is looked up externally
-    Coercion<?> coercion = coercions.find(field);
+    CoercionTarget coercionTarget = field.getCoercionTarget();
+    Coercion<?> coercion = coercions.find(coercionTarget);
     ResolvedValue value = sources.find(key);
 
     // if we have not resolved a value then don't set it
@@ -94,12 +95,15 @@ public class ConfiguredConfigurationListener
     // but the general assumption is that all configured fields _must_ have a value
     // so thats ok
     if (value.isResolved()) {
-      field.setValue(coercion.coerce(field, value.getValue()));
+      field.setValue(coercion.coerce(coercionTarget, value.getValue()));
     }
     else
-      if (!field.hasDefaultValue()) {
-        throw new MissingConfigurationException(key, sources);
-      }
+      if (coercion.hasDefaultValue())
+        field.setValue(coercion.getDefaultValue());
+      else
+        if (!field.hasDefaultValue()) {
+          throw new MissingConfigurationException(key, sources);
+        }
   }
 
   @Override
