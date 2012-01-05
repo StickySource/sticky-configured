@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.stickycode.coercion.Coercions;
+import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.configured.source.StickyApplicationConfigurationSource;
 import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
 
@@ -88,13 +89,14 @@ public class ConfigurationSystemComponentTest {
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
 
     mockConfiguration();
-
+    
     configurationSystem.processAttribute("bean.field", attribute);
   }
 
   @SuppressWarnings("rawtypes")
   private void mockConfiguration() {
     when((Class) attribute.getType()).thenReturn((Class) String.class);
+    when(attribute.getCoercionTarget()).thenReturn(CoercionTargets.find(String.class));
     when(configuration.getName()).thenReturn("bean");
     when(attribute.getName()).thenReturn("field");
     when(repository.iterator()).thenReturn(Collections.singleton(configuration).iterator());
