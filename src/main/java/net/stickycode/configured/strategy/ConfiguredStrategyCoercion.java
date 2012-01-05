@@ -1,31 +1,39 @@
 package net.stickycode.configured.strategy;
 
+import java.lang.reflect.AnnotatedElement;
+
 import javax.inject.Inject;
 
-import net.stickycode.coercion.AbstractFailedToCoerceValueException;
-import net.stickycode.coercion.Coercion;
+import net.stickycode.coercion.AbstractNoDefaultCoercion;
 import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.metadata.MetadataResolverRegistry;
 import net.stickycode.stereotype.ConfiguredStrategy;
 import net.stickycode.stereotype.StickyPlugin;
 
 @StickyPlugin
 public class ConfiguredStrategyCoercion
-    implements Coercion<Object> {
-
+    extends AbstractNoDefaultCoercion<Object> {
+  
   @Inject
   private StrategyFinder finder;
+  
+  @Inject
+  private MetadataResolverRegistry metadataRegistry;
 
   @Override
-  public Object coerce(CoercionTarget type, String value)
-      throws AbstractFailedToCoerceValueException {
+  public Object coerce(CoercionTarget type, String value) {
     return finder.findWithName(type.getType(), value);
   }
 
   @Override
   public boolean isApplicableTo(CoercionTarget type) {
-    if (!type.hasAnnotation(ConfiguredStrategy.class))
+    if (!type.canBeAnnotated())
       return false;
-
+    
+    AnnotatedElement annotatedElement = type.getAnnotatedElement();
+    if (!metadataRegistry.is(annotatedElement).metaAnnotatedWith(ConfiguredStrategy.class))
+      return false;
+    
     if (!type.getType().isInterface())
       throw new ConfiguredStrategyTargetsMustBeInterfaces(type);
 
