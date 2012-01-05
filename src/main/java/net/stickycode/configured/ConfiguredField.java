@@ -14,16 +14,13 @@ package net.stickycode.configured;
 
 import static net.stickycode.exception.Preconditions.notNull;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
-import net.stickycode.coercion.AbstractCoercionType;
+import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.reflector.Fields;
 
 public class ConfiguredField
-    extends AbstractCoercionType
     implements ConfigurationAttribute {
 
   private final Object defaultValue;
@@ -60,20 +57,6 @@ public class ConfiguredField
   }
 
   @Override
-  public boolean isGenericType() {
-    return field.getGenericType() instanceof ParameterizedType;
-  }
-
-  @Override
-  public ParameterizedType getGenericType() {
-    Type type = field.getGenericType();
-    if (type instanceof ParameterizedType)
-      return (ParameterizedType) type;
-
-    throw new IllegalStateException("Field is not parameterised");
-  }
-
-  @Override
   public String getName() {
     return field.getName();
   }
@@ -84,8 +67,8 @@ public class ConfiguredField
   }
 
   @Override
-  public boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
-    return field.isAnnotationPresent(annotationClass);
+  public CoercionTarget getCoercionTarget() {
+    return CoercionTargets.find(field);
   }
 
 }
