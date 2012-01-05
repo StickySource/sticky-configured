@@ -18,18 +18,24 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import net.stickycode.coercion.Coercion;
+import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.reflector.TriedToAccessFieldButWasDeniedException;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-
 public class ConfiguredFieldTest {
+
   @SuppressWarnings("unused")
   private static class OneField {
+
     private String noDefault;
+
     private String defaulted = "blah";
+
     private Coercion<Pattern> generic;
+
     private Float[] floats;
+
   }
 
   @Test
@@ -46,7 +52,6 @@ public class ConfiguredFieldTest {
     assertThat(f.getDefaultValue()).isEqualTo("blah");
     assertThat(f.getValue()).isEqualTo("blah");
     assertThat(f.getName()).isEqualTo("defaulted");
-//    assertThat(f.getCategory()).isEqualTo("oneField");
   }
 
   @Test
@@ -63,7 +68,7 @@ public class ConfiguredFieldTest {
     }
   }
 
-  @Test(expected=TriedToAccessFieldButWasDeniedException.class)
+  @Test(expected = TriedToAccessFieldButWasDeniedException.class)
   public void nullTarget() throws SecurityException, NoSuchFieldException {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(true);
@@ -91,18 +96,18 @@ public class ConfiguredFieldTest {
     ConfiguredField f = configuredField("generic");
     assertThat(f.hasDefaultValue()).isFalse();
     assertThat(f.getDefaultValue()).isEqualTo(null);
-    assertThat(f.isGenericType()).isTrue();
-    assertThat(f.getGenericType()).isNotNull();
-    assertThat(f.isArray()).isFalse();
+    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
+    assertThat(f.getCoercionTarget().isArray()).isFalse();
+    assertThat(f.getCoercionTarget().isPrimitive()).isFalse();
   }
-
+  
   @Test
   public void floats() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("floats");
     assertThat(f.hasDefaultValue()).isFalse();
     assertThat(f.getDefaultValue()).isEqualTo(null);
-    assertThat(f.isGenericType()).isFalse();
-    assertThat(f.isArray()).isTrue();
+    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
+    assertThat(f.getCoercionTarget().getComponentCoercionTypes()).containsOnly(CoercionTargets.find(Float.class));
   }
 
   private ConfiguredField configuredField(String name) throws NoSuchFieldException {
