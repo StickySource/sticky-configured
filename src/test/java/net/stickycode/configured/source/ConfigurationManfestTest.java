@@ -9,7 +9,6 @@ import java.util.Collections;
 import net.stickycode.configured.ConfigurationManifest;
 import net.stickycode.configured.ConfigurationSource;
 import net.stickycode.reflector.Fields;
-import net.stickycode.stereotype.StickyComponent;
 
 import org.junit.Test;
 
