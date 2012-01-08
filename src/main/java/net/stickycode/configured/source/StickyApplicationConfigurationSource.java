@@ -91,5 +91,11 @@ public class StickyApplicationConfigurationSource {
   protected ClassLoader getClassLoader() {
     return getClass().getClassLoader();
   }
+  
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
+
 
 }

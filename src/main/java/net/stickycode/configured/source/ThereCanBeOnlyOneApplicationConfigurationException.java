@@ -25,5 +25,4 @@ public class ThereCanBeOnlyOneApplicationConfigurationException
     super("There can only one configuration but more were found {}, {}", url, conflict);
   }
 
-
 }

@@ -28,5 +28,10 @@ public class EnvironmentConfigurationSource
   public String getValue(String key) {
     return System.getenv(key);
   }
+  
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
 
 }

@@ -25,4 +25,9 @@ public class SystemPropertiesConfigurationSource {
     return System.getProperty(key);
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
+
 }

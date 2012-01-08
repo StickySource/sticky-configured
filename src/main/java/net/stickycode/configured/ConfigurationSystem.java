@@ -30,28 +30,29 @@ public class ConfigurationSystem {
   private Set<ConfigurationListener> listeners;
 
   public void configure() {
-    log.info("starting configuration lifecycle");
+    log.info("configuration starting");
+    
+    log.debug("resolving");
     for (ConfigurationListener listener : listeners) {
       listener.resolve();
     }
-    log.debug("resolved");
 
+    log.debug("preconfiguring");
     for (ConfigurationListener listener : listeners) {
       listener.preConfigure();
     }
-    log.debug("preconfigured");
 
+    log.debug("configuring");
     for (ConfigurationListener listener : listeners) {
       listener.configure();
     }
-    log.debug("configured");
 
+    log.debug("postconfiguring");
     for (ConfigurationListener listener : listeners) {
       listener.postConfigure();
     }
-    log.debug("postconfigured");
 
-    log.info("configured {}", this);
+    log.info("configuration complete");
   }
 
   @Override

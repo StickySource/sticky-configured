@@ -39,7 +39,6 @@ public class ConfiguredFieldProcessor
       throw new ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException(target, field);
 
     ConfiguredField configuredField = new ConfiguredField(target, field);
-    log.info("registering {}", configuredField);
     configuration.addAttribute(configuredField);
   }
 }

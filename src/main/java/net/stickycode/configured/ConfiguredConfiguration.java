@@ -65,7 +65,7 @@ public class ConfiguredConfiguration
 
   @Override
   public String toString() {
-    return String.format("ConfigurationConfiguration(%s,%s)", getName(), attributes);
+    return String.format("%s with attributes %s", getName(), attributes);
   }
 
   public String getName() {

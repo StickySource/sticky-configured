@@ -44,37 +44,30 @@ public class ConfiguredConfigurationListener
 
   @PostConstruct
   public void initialise() {
-    log.info("Initialising configuration building keys with {} with configuration sources {} and coercions {}", new Object[] {
+    log.info("building keys using {}, resolving values from sources {} and coercing with {}", new Object[] {
         keyBuilder, sources, coercions });
   }
 
   public void resolve() {
-    log.debug("resolving configuration sources");
     sources.resolve(configurations);
   }
 
   public void preConfigure() {
-    log.debug("preconfiguring system {}", this);
     for (Configuration configuration : configurations)
       configuration.preConfigure();
   }
 
   public void configure() {
-    log.info("configuring {}", this);
     for (Configuration configuration : configurations)
       configure(configuration);
   }
 
   public void postConfigure() {
-    log.debug("postconfiguring system {}", this);
     for (Configuration configuration : configurations)
       configuration.postConfigure();
-
-    log.info("configured {}", this);
   }
 
   void configure(Configuration configuration) {
-    log.debug("configuring {}", configuration);
     for (ConfigurationAttribute attribute : configuration) {
       String key = keyBuilder.build(configuration, attribute);
       processAttribute(key, attribute);
