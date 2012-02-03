@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.target.CoercionTargets;
+import net.stickycode.exception.NullParameterException;
 import net.stickycode.reflector.Fields;
 
 public class ConfiguredField
@@ -28,6 +29,8 @@ public class ConfiguredField
   private final Object target;
 
   private final Field field;
+
+  private boolean hasBeenSet = false;
 
   public ConfiguredField(Object target, Field field) {
     this.target = notNull(target, "The target bean for a configured field cannot be null");
@@ -53,6 +56,10 @@ public class ConfiguredField
   }
 
   public void setValue(Object value) {
+    if (value == null)
+      throw new NullParameterException("Cannot set {} to null", field);
+
+    this.hasBeenSet = true;
     Fields.set(target, field, value);
   }
 
@@ -69,6 +76,16 @@ public class ConfiguredField
   @Override
   public CoercionTarget getCoercionTarget() {
     return CoercionTargets.find(field);
+  }
+
+  @Override
+  public boolean canBeUpdated() {
+    return true;
+  }
+
+  @Override
+  public boolean hasValue() {
+    return hasBeenSet || hasDefaultValue();
   }
 
 }

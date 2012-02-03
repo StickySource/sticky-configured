@@ -69,12 +69,21 @@ public class ConfiguredConfigurationListener
 
   void configure(Configuration configuration) {
     for (ConfigurationAttribute attribute : configuration) {
-      String key = keyBuilder.build(configuration, attribute);
-      processAttribute(key, attribute);
+      if (attribute.canBeUpdated())
+        updateAttribute(configuration, attribute);
+      else {
+        if (!attribute.hasValue())
+          throw new AttributeCannotBeUpdatedAndHasNoValueException(configuration, attribute);
+      }
     }
   }
 
-  void processAttribute(String key, ConfigurationAttribute field) {
+  void updateAttribute(Configuration configuration, ConfigurationAttribute field) {
+    String key = keyBuilder.build(configuration, field);
+    updateAttribute(key, field);
+  }
+
+  void updateAttribute(String key, ConfigurationAttribute field) {
     // try to find the coercion first as this failure is cheaper
     // that a look up failure given there is a reasonable chance
     // that configuration is looked up externally

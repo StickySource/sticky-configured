@@ -90,7 +90,7 @@ public class ConfigurationSystemComponentTest {
 
     mockConfiguration();
     
-    configurationSystem.processAttribute("bean.field", attribute);
+    configurationSystem.updateAttribute("bean.field", attribute);
   }
 
   @SuppressWarnings("rawtypes")
@@ -113,7 +113,7 @@ public class ConfigurationSystemComponentTest {
 
     mockConfiguration();
 
-    configurationSystem.processAttribute("bean.field", attribute);
+    configurationSystem.updateAttribute("bean.field", attribute);
     verify(attribute).setValue("a");
   }
 
@@ -123,7 +123,7 @@ public class ConfigurationSystemComponentTest {
     when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
     when(attribute.hasDefaultValue()).thenReturn(true);
     mockConfiguration();
-    configurationSystem.processAttribute("bean.field", attribute);
+    configurationSystem.updateAttribute("bean.field", attribute);
     verify(attribute, times(0)).setValue("a");
   }
 }
