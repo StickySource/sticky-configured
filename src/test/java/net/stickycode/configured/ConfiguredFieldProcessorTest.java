@@ -12,17 +12,18 @@
  */
 package net.stickycode.configured;
 
-import java.lang.reflect.Field;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import static org.mockito.Mockito.verify;
 
+import java.lang.reflect.Field;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
+
+@RunWith(MockitoJUnitRunner.class)
 public class ConfiguredFieldProcessorTest {
 
   Integer integer;
@@ -30,20 +31,18 @@ public class ConfiguredFieldProcessorTest {
 
   @Mock
   private ConfiguredConfiguration configuration;
-
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-  }
+  
+  @Mock
+  private ConfiguredBeanProcessor processor;
 
   @Test(expected=ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException.class)
   public void primitive() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration).processField(this, getField("primitive"));
+    new ConfiguredFieldProcessor(processor, configuration).processField(this, getField("primitive"));
   }
 
   @Test
   public void processed() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration).processField(this, getField("integer"));
+    new ConfiguredFieldProcessor(processor, configuration).processField(this, getField("integer"));
     verify(configuration).addAttribute(Mockito.any(ConfiguredField.class));
   }
 

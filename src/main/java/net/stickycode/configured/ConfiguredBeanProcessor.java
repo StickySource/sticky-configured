@@ -1,5 +1,7 @@
 package net.stickycode.configured;
 
+import java.beans.Introspector;
+
 import javax.inject.Inject;
 
 import net.stickycode.reflector.Reflector;
@@ -14,10 +16,19 @@ public class ConfiguredBeanProcessor {
   private ConfigurationRepository configurationRepository;
 
   public void process(Object instance) {
-    ConfiguredConfiguration configuration = new ConfiguredConfiguration(instance);
+    String name = Introspector.decapitalize(instance.getClass().getSimpleName());
+    process(instance, name);
+  }
+
+  public void process(Object instance, String name) {
+    ConfiguredConfiguration configuration = new ConfiguredConfiguration(
+        instance,
+        name);
+    
     new Reflector()
-        .forEachField(new ConfiguredFieldProcessor(configuration))
+        .forEachField(new ConfiguredFieldProcessor(this, configuration))
         .process(instance);
+    
     configurationRepository.register(configuration);
   }
 }

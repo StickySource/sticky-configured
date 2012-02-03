@@ -12,13 +12,17 @@
  */
 package net.stickycode.configured;
 
+import java.beans.Introspector;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.reflector.AnnotatedFieldProcessor;
 import net.stickycode.stereotype.Configured;
+import net.stickycode.stereotype.ConfiguredComponent;
 import net.stickycode.stereotype.ConfiguredStrategy;
 
 public class ConfiguredFieldProcessor
@@ -28,9 +32,12 @@ public class ConfiguredFieldProcessor
 
   private final ConfiguredConfiguration configuration;
 
-  public ConfiguredFieldProcessor(ConfiguredConfiguration configuration) {
+  private final ConfiguredBeanProcessor repository;
+
+  public ConfiguredFieldProcessor(ConfiguredBeanProcessor configuredBeanProcessor, ConfiguredConfiguration configuration) {
     super(Configured.class, ConfiguredStrategy.class);
     this.configuration = configuration;
+    this.repository = configuredBeanProcessor;
   }
 
   @Override
@@ -38,7 +45,41 @@ public class ConfiguredFieldProcessor
     if (field.getType().isPrimitive())
       throw new ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException(target, field);
 
-    ConfiguredField configuredField = new ConfiguredField(target, field);
-    configuration.addAttribute(configuredField);
+    if (target.getClass().isAnnotationPresent(ConfiguredComponent.class))
+      processComponent(target, field);
+    else
+      configuration.addAttribute(new ConfiguredField(target, field));
+  }
+
+  private void processComponent(Object target, Field field) {
+    Class<?> type = field.getType();
+    Object component = newInstance(type);
+    repository.process(component, Introspector.decapitalize(target.getClass().getSimpleName() + "." + field.getName()));
+
+    configuration.addAttribute(new ConfigurationComponent(component, CoercionTargets.find(field), field.getName()));
+  }
+
+  private Object newInstance(Class<?> type) {
+    try {
+      return type.getConstructor().newInstance();
+    }
+    catch (IllegalArgumentException e) {
+      throw new RuntimeException(e);
+    }
+    catch (SecurityException e) {
+      throw new RuntimeException(e);
+    }
+    catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    }
+    catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+    catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
+    catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

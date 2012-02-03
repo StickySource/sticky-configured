@@ -19,6 +19,7 @@ public class ConfigurationSystemTest {
 
   private VerifyingListener listener = new VerifyingListener();
 
+  @SuppressWarnings("unused")
   @Spy
   private Set<VerifyingListener> listeners =
       new HashSet<ConfigurationSystemTest.VerifyingListener>(Arrays.asList(listener));

@@ -12,6 +12,7 @@
  */
 package net.stickycode.configured;
 
+import static net.stickycode.exception.Preconditions.notBlank;
 import static net.stickycode.exception.Preconditions.notNull;
 
 import java.beans.Introspector;
@@ -28,11 +29,13 @@ public class ConfiguredConfiguration
     implements Configuration {
 
   private final Object target;
+  private final String name;
 
   private final List<ConfigurationAttribute> attributes = new ArrayList<ConfigurationAttribute>();
 
-  public ConfiguredConfiguration(Object instance) {
+  public ConfiguredConfiguration(Object instance, String name) {
     this.target = notNull(instance, "The target object of configuration should not be null");
+    this.name = notBlank(name, "The name of a ConfiguredConfiguration cannot be blank");
   }
 
   @Override
@@ -69,7 +72,7 @@ public class ConfiguredConfiguration
   }
 
   public String getName() {
-    return Introspector.decapitalize(getType().getSimpleName());
+    return name;
   }
 
 }
