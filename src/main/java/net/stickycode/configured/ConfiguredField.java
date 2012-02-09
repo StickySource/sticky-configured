@@ -29,12 +29,15 @@ public class ConfiguredField
   private final Object target;
 
   private final Field field;
+  
+  private final CoercionTarget coercionTarget;
 
   private boolean hasBeenSet = false;
 
-  public ConfiguredField(Object target, Field field) {
+  public ConfiguredField(Object target, Field field, CoercionTarget coercionTarget) {
     this.target = notNull(target, "The target bean for a configured field cannot be null");
     this.field = notNull(field, "A configured field cannot be null");
+    this.coercionTarget = notNull(coercionTarget, "A configured field must have a coercion target");
     this.defaultValue = getValue();
   }
 
@@ -75,7 +78,7 @@ public class ConfiguredField
 
   @Override
   public CoercionTarget getCoercionTarget() {
-    return CoercionTargets.find(field);
+    return coercionTarget;
   }
 
   @Override

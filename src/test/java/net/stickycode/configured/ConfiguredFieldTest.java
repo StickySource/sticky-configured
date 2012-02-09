@@ -59,7 +59,7 @@ public class ConfiguredFieldTest {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(false);
     try {
-      ConfiguredField f = new ConfiguredField(new OneField(), field);
+      ConfiguredField f = configuredField(new OneField(), field);
       assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
@@ -68,12 +68,16 @@ public class ConfiguredFieldTest {
     }
   }
 
+  private ConfiguredField configuredField(Object target, Field field) {
+    return new ConfiguredField(target, field, CoercionTargets.find(field));
+  }
+
   @Test(expected = TriedToAccessFieldButWasDeniedException.class)
   public void nullTarget() throws SecurityException, NoSuchFieldException {
     Field field = OneField.class.getDeclaredField("noDefault");
     field.setAccessible(true);
     try {
-      ConfiguredField f = new ConfiguredField(new String(), field);
+      ConfiguredField f = configuredField(new String(), field);
       assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
@@ -112,7 +116,7 @@ public class ConfiguredFieldTest {
 
   private ConfiguredField configuredField(String name) throws NoSuchFieldException {
     Field field = OneField.class.getDeclaredField(name);
-    ConfiguredField f = new ConfiguredField(new OneField(), field);
+    ConfiguredField f = configuredField(new OneField(), field);
     return f;
   }
 }

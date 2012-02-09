@@ -101,7 +101,7 @@ public class ConfiguredConfigurationListener
     }
     else
       if (coercion.hasDefaultValue())
-        field.setValue(coercion.getDefaultValue());
+        field.setValue(coercion.getDefaultValue(coercionTarget));
       else
         if (!field.hasDefaultValue()) {
           throw new MissingConfigurationException(key, sources);
