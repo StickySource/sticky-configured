@@ -19,13 +19,6 @@ public class SimpleNameDotFieldConfigurationKeyBuilder
     implements ConfigurationKeyBuilder {
 
   @Override
-  public String buildKey(Configuration configuration, ConfigurationAttribute attribute) {
-    return configuration.getName()
-        + "." +
-        attribute.getName();
-  }
-
-  @Override
   public String toString() {
     return getClass().getSimpleName();
   }

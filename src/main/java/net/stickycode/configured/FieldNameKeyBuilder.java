@@ -16,11 +16,6 @@ public class FieldNameKeyBuilder
     implements ConfigurationKeyBuilder {
 
   @Override
-  public String buildKey(Configuration configuration, ConfigurationAttribute attribute) {
-    return attribute.getName();
-  }
-
-  @Override
   public String toString() {
     return getClass().getSimpleName();
   }
