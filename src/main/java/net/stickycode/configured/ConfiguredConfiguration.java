@@ -15,7 +15,6 @@ package net.stickycode.configured;
 import static net.stickycode.exception.Preconditions.notBlank;
 import static net.stickycode.exception.Preconditions.notNull;
 
-import java.beans.Introspector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
