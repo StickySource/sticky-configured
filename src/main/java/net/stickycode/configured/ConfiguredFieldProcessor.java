@@ -16,16 +16,17 @@ import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.target.CoercionTargets;
+import net.stickycode.configured.finder.BeanFinder;
 import net.stickycode.reflector.AnnotatedFieldProcessor;
 import net.stickycode.reflector.Fields;
 import net.stickycode.stereotype.Configured;
 import net.stickycode.stereotype.ConfiguredComponent;
 import net.stickycode.stereotype.ConfiguredStrategy;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfiguredFieldProcessor
     extends AnnotatedFieldProcessor {
@@ -36,13 +37,17 @@ public class ConfiguredFieldProcessor
 
   private final ConfiguredBeanProcessor repository;
 
+  private final BeanFinder finder;
+
   private CoercionTarget parent;
 
-  public ConfiguredFieldProcessor(ConfiguredBeanProcessor configuredBeanProcessor, ConfiguredConfiguration configuration, CoercionTarget parent) {
+  public ConfiguredFieldProcessor(ConfiguredBeanProcessor configuredBeanProcessor, ConfiguredConfiguration configuration,
+      CoercionTarget parent, BeanFinder finder) {
     super(Configured.class, ConfiguredStrategy.class);
     this.configuration = configuration;
     this.repository = configuredBeanProcessor;
     this.parent = parent;
+    this.finder = finder;
   }
 
   @Override
@@ -59,7 +64,7 @@ public class ConfiguredFieldProcessor
   private CoercionTarget fieldTarget(Field field) {
     if (parent == null)
       return CoercionTargets.find(field);
-    
+
     return CoercionTargets.find(field, parent);
   }
 
@@ -67,33 +72,14 @@ public class ConfiguredFieldProcessor
     Class<?> type = field.getType();
     Object component = newInstance(type);
     CoercionTarget componentTarget = fieldTarget(field);
-    
-    repository.process(component, Introspector.decapitalize(target.getClass().getSimpleName() + "." + field.getName()), componentTarget);
+
+    repository.process(component, Introspector.decapitalize(target.getClass().getSimpleName() + "." + field.getName()),
+        componentTarget);
     configuration.addAttribute(new ConfigurationComponent(component, componentTarget, field.getName()));
     Fields.set(target, field, component);
   }
 
   private Object newInstance(Class<?> type) {
-    try {
-      return type.getConstructor().newInstance();
-    }
-    catch (IllegalArgumentException e) {
-      throw new RuntimeException(e);
-    }
-    catch (SecurityException e) {
-      throw new RuntimeException(e);
-    }
-    catch (InstantiationException e) {
-      throw new RuntimeException(e);
-    }
-    catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
-    catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
-    catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
+    return finder.find(type);
   }
 }
