@@ -33,11 +33,11 @@ public class ResolvedValue {
   @Override
   public String toString() {
     if (!isResolved())
-      return seed + " is undefined";
-    
+      return seed + " (unresolved)";
+
     if (seed.equals(value))
       return seed;
-    
+
     return seed + "->" + value;
   }
 
