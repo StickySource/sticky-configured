@@ -96,6 +96,9 @@ public class ConfigurationManifest {
 
   @Override
   public String toString() {
+    if (sources == null)
+      return getClass().getSimpleName();
+
     return sources.toString();
   }
 
