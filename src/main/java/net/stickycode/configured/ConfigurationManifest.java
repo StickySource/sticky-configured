@@ -2,15 +2,13 @@ package net.stickycode.configured;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import net.stickycode.configuration.ConfigurationSource;
 import net.stickycode.configured.placeholder.PlaceholderResolver;
 import net.stickycode.configured.placeholder.ResolvedValue;
-import net.stickycode.configured.source.StickyApplicationConfigurationSource;
-import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
 import net.stickycode.stereotype.StickyComponent;
 
 import org.slf4j.Logger;
@@ -22,13 +20,7 @@ public class ConfigurationManifest {
   private Logger log = LoggerFactory.getLogger(getClass());
 
   @Inject
-  private SystemPropertiesConfigurationSource systemProperties;
-
-  @Inject
-  private StickyApplicationConfigurationSource applicationConfiguration;
-
-  @Inject
-  private Set<ConfigurationSource> sources;
+  private ConfigurationSource source;
 
   @Inject
   private ConfigurationKeyBuilder keyBuilder;
@@ -74,16 +66,8 @@ public class ConfigurationManifest {
   }
 
   String findValueInSources(String key) {
-    if (applicationConfiguration.hasValue(key))
-      return applicationConfiguration.getValue(key);
-
-    if (systemProperties.hasValue(key))
-      return systemProperties.getValue(key);
-
-    for (ConfigurationSource s : sources) {
-      if (s.hasValue(key))
-        return s.getValue(key);
-    }
+      if (source.hasValue(key))
+        return source.getValue(key);
 
     log.debug("value not found for key '{}'", key);
 
@@ -96,10 +80,7 @@ public class ConfigurationManifest {
 
   @Override
   public String toString() {
-    if (sources == null)
-      return getClass().getSimpleName();
-
-    return sources.toString();
+    return source.toString();
   }
 
 }

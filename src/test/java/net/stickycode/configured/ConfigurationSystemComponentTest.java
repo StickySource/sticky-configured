@@ -23,6 +23,7 @@ import java.util.Set;
 
 import net.stickycode.coercion.Coercions;
 import net.stickycode.coercion.target.CoercionTargets;
+import net.stickycode.configuration.ConfigurationSource;
 import net.stickycode.configured.source.StickyApplicationConfigurationSource;
 import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
 
