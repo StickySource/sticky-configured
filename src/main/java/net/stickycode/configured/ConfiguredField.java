@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
+ * Copyright (c) 2012 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
  * and you may not use this file except in compliance with the Apache License Version 2.0.
@@ -17,7 +17,6 @@ import static net.stickycode.exception.Preconditions.notNull;
 import java.lang.reflect.Field;
 
 import net.stickycode.coercion.CoercionTarget;
-import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.exception.NullParameterException;
 import net.stickycode.reflector.Fields;
 
@@ -89,6 +88,11 @@ public class ConfiguredField
   @Override
   public boolean hasValue() {
     return hasBeenSet || hasDefaultValue();
+  }
+
+  @Override
+  public String join(String delimeter) {
+    return target.getClass().getSimpleName() + delimeter + field.getName();
   }
 
 }

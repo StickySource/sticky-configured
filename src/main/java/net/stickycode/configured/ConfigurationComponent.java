@@ -63,4 +63,9 @@ public class ConfigurationComponent
     return true;
   }
 
+  @Override
+  public String join(String delimeter) {
+    return "BLAH";
+  }
+
 }

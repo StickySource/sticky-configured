@@ -12,6 +12,8 @@
  */
 package net.stickycode.configured;
 
+import net.stickycode.configuration.ConfigurationKey;
+import net.stickycode.configuration.ConfigurationResolver;
 import net.stickycode.exception.PermanentException;
 
 
@@ -19,7 +21,7 @@ import net.stickycode.exception.PermanentException;
 public class MissingConfigurationException
     extends PermanentException {
 
-  public MissingConfigurationException(String key, ConfigurationManifest sources) {
+  public MissingConfigurationException(ConfigurationKey key, ConfigurationResolver sources) {
     super("A value for '{}' could not be found in '{}'", key, sources);
   }
 

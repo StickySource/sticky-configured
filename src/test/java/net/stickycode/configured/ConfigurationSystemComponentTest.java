@@ -12,21 +12,19 @@
  */
 package net.stickycode.configured;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.Set;
-
 import net.stickycode.coercion.Coercions;
 import net.stickycode.coercion.target.CoercionTargets;
-import net.stickycode.configuration.ConfigurationSource;
-import net.stickycode.configured.source.StickyApplicationConfigurationSource;
-import net.stickycode.configured.source.SystemPropertiesConfigurationSource;
+import net.stickycode.configuration.ConfigurationKey;
+import net.stickycode.configuration.ConfigurationResolutions;
+import net.stickycode.configuration.ConfigurationResolver;
+import net.stickycode.configuration.ConfigurationValues;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -38,93 +36,55 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ConfigurationSystemComponentTest {
 
   @Mock
-  Set<ConfigurationSource> source;
-
-  @Spy
-  @InjectMocks
-  ConfigurationManifest sources = new ConfigurationManifest();
-
-  @Mock
   ConfigurationAttribute attribute;
 
   @Mock
   Configuration configuration;
-
-  @Spy
-  ConfigurationKeyBuilder builder = new SimpleNameDotFieldConfigurationKeyBuilder();
-
+  
+  @Mock
+  ConfigurationResolver resolver;
+  
   @Spy
   Coercions coercions = new Coercions();
-
+  
   @Mock
-  ConfigurationRepository repository;
-
-  @Mock
-  StickyApplicationConfigurationSource applicationSource;
-
-  @Mock
-  SystemPropertiesConfigurationSource systemProperties;
-
+  ConfigurationResolutions resolutions;
+  
   @InjectMocks
   ConfiguredConfigurationListener configurationSystem = new ConfiguredConfigurationListener();
 
-  @Test
-  public void lookupValue() {
-    ConfigurationSource s = mock(ConfigurationSource.class);
-    when(s.hasValue("a")).thenReturn(true);
-    when(s.getValue("a")).thenReturn("a");
-    when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    assertThat(sources.lookupValue("a")).isEqualTo("a");
+  @Before
+  public void before() {
+    when(attribute.getCoercionTarget()).thenReturn(CoercionTargets.find(String.class));
+    when(attribute.join(".")).thenReturn("bean.field");
   }
-
-  @Test
-  public void lookupValueNotFoundIsNull() {
-    ConfigurationSource s = mock(ConfigurationSource.class);
-    when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-    assertThat(sources.lookupValue("a")).isNull();
-  }
-
+  
   @Test(expected = MissingConfigurationException.class)
   public void missingConfigurationExcepts() {
-    ConfigurationSource s = mock(ConfigurationSource.class);
-    when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
-
-    mockConfiguration();
-    
-    configurationSystem.updateAttribute("bean.field", attribute);
-  }
-
-  @SuppressWarnings("rawtypes")
-  private void mockConfiguration() {
-    when((Class) attribute.getType()).thenReturn((Class) String.class);
-    when(attribute.getCoercionTarget()).thenReturn(CoercionTargets.find(String.class));
-    when(configuration.getName()).thenReturn("bean");
-    when(attribute.getName()).thenReturn("field");
-    when(repository.iterator()).thenReturn(Collections.singleton(configuration).iterator());
-    when(configuration.iterator()).thenReturn(Collections.singleton(attribute).iterator());
-    sources.resolve(repository);
+    ConfigurationValues mock = mock(ConfigurationValues.class);
+    when(resolutions.find(any(ConfigurationKey.class))).thenReturn(mock);
+    configurationSystem.updateAttribute(attribute, resolutions);
   }
 
   @Test
   public void processAttribute() {
-    ConfigurationSource s = mock(ConfigurationSource.class);
-    when(s.hasValue("bean.field")).thenReturn(true);
-    when(s.getValue("bean.field")).thenReturn("a");
-    when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
 
-    mockConfiguration();
-
-    configurationSystem.updateAttribute("bean.field", attribute);
+    ConfigurationValues mock = mock(ConfigurationValues.class);
+    when(mock.getValue()).thenReturn("a");
+    when(mock.hasValue()).thenReturn(true);
+    when(resolutions.find(any(ConfigurationKey.class))).thenReturn(mock);
+    
+    configurationSystem.updateAttribute(attribute, resolutions);
+    
     verify(attribute).setValue("a");
   }
 
   @Test
   public void leaveDefaultValue() {
-    ConfigurationSource s = mock(ConfigurationSource.class);
-    when(source.iterator()).thenReturn(Collections.singleton(s).iterator());
+    ConfigurationValues mock = mock(ConfigurationValues.class);
+    when(resolutions.find(any(ConfigurationKey.class))).thenReturn(mock);
     when(attribute.hasDefaultValue()).thenReturn(true);
-    mockConfiguration();
-    configurationSystem.updateAttribute("bean.field", attribute);
+    configurationSystem.updateAttribute(attribute, resolutions);
     verify(attribute, times(0)).setValue("a");
   }
 }
