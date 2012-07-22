@@ -1,6 +1,10 @@
 package net.stickycode.configured;
 
+import net.stickycode.bootstrap.ComponentContainer;
+import net.stickycode.coercion.Coercion;
+import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.configuration.ResolvedConfiguration;
 
 public class ConfigurationComponent
     implements ConfigurationAttribute {
@@ -10,6 +14,10 @@ public class ConfigurationComponent
   private final CoercionTarget target;
 
   private final String name;
+
+  private ResolvedConfiguration resolution;
+
+  private Object configuredValue;
 
   public ConfigurationComponent(Object value, CoercionTarget target, String name) {
     super();
@@ -65,7 +73,35 @@ public class ConfigurationComponent
 
   @Override
   public String join(String delimeter) {
-    return "BLAH";
+    return name;
   }
+
+  @Override
+  public void resolvedWith(ResolvedConfiguration resolved) {
+    this.resolution = resolved;
+  }
+
+  @Override
+  public ResolvedConfiguration getResolution() {
+    return resolution;
+  }
+
+  @Override
+  public void applyCoercion(CoercionFinder coercions) {
+    Coercion<?> coercion = coercions.find(target);
+    this.configuredValue = coercion.coerce(target, resolution.getValue());
+  }
+
+  @Override
+  public void update() {
+    if (value == null)
+      throw new AttributeCannotBeUpdatedAndHasNoValueException(this);
+  }
+
+  @Override
+  public void invertControl(ComponentContainer container) {
+    container.inject(value);
+  }
+
 
 }

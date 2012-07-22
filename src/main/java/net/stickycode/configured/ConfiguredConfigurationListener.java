@@ -15,13 +15,9 @@ package net.stickycode.configured;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import net.stickycode.coercion.Coercion;
+import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.CoercionFinder;
-import net.stickycode.coercion.CoercionTarget;
-import net.stickycode.configuration.ConfigurationResolutions;
 import net.stickycode.configuration.ConfigurationResolver;
-import net.stickycode.configuration.ConfigurationValues;
-import net.stickycode.configuration.Value;
 import net.stickycode.stereotype.StickyPlugin;
 
 import org.slf4j.Logger;
@@ -43,15 +39,20 @@ public class ConfiguredConfigurationListener
   private ConfigurationRepository configurations;
 
   @Inject
-  private ConfigurationKeyBuilder keyBuilder;
+  private ComponentContainer container;
 
   @PostConstruct
   public void initialise() {
-    log.info("building keys using {}, resolving values from sources {} and coercing with {}", new Object[] {
-        keyBuilder, resolver, coercions });
+    log.info(" resolving values with {} and coercing with {}", resolver, coercions);
   }
 
   public void resolve() {
+    for (Configuration configuration : configurations)
+      for (ConfigurationAttribute attribute : configuration) {
+        resolver.resolve(attribute);
+        attribute.applyCoercion(coercions);
+        attribute.invertControl(container);
+      }
   }
 
   public void preConfigure() {
@@ -60,9 +61,8 @@ public class ConfiguredConfigurationListener
   }
 
   public void configure() {
-    ConfigurationResolutions resolutions = resolver.resolve(new ConfiguredAttributeIterable(configurations));
     for (Configuration configuration : configurations)
-      configure(configuration, resolutions);
+      configure(configuration);
   }
 
   public void postConfigure() {
@@ -70,40 +70,14 @@ public class ConfiguredConfigurationListener
       configuration.postConfigure();
   }
 
-  void configure(Configuration configuration, ConfigurationResolutions resolutions) {
+  void configure(Configuration configuration) {
     for (ConfigurationAttribute attribute : configuration) {
-      if (attribute.canBeUpdated())
-        updateAttribute(attribute,resolutions);
-      else {
-        if (!attribute.hasValue())
-          throw new AttributeCannotBeUpdatedAndHasNoValueException(configuration, attribute);
-      }
+      updateAttribute(attribute);
     }
   }
 
-  void updateAttribute(ConfigurationAttribute field, ConfigurationResolutions resolutions) {
-    // try to find the coercion first as this failure is cheaper
-    // that a look up failure given there is a reasonable chance
-    // that configuration is looked up externally
-    CoercionTarget coercionTarget = field.getCoercionTarget();
-    Coercion<?> coercion = coercions.find(coercionTarget);
-    ConfigurationValues value = resolutions.find(field);
-
-    // if we have not resolved a value then don't set it
-    // the implication is that if the configuration is reloaded and
-    // we no longer have a value that it does not get unset
-    // but the general assumption is that all configured fields _must_ have a value
-    // so thats ok
-    if (value.hasValue()) {
-      field.setValue(coercion.coerce(coercionTarget, value.getValue()));
-    }
-    else
-      if (coercion.hasDefaultValue())
-        field.setValue(coercion.getDefaultValue(coercionTarget));
-      else
-        if (!field.hasDefaultValue()) {
-          throw new MissingConfigurationException(field, resolver);
-        }
+  void updateAttribute(ConfigurationAttribute field) {
+    field.update();
   }
 
   @Override

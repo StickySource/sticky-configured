@@ -6,10 +6,10 @@ import net.stickycode.exception.PermanentException;
 public class AttributeCannotBeUpdatedAndHasNoValueException
     extends PermanentException {
 
-  public AttributeCannotBeUpdatedAndHasNoValueException(Configuration configuration, ConfigurationAttribute attribute) {
+  public AttributeCannotBeUpdatedAndHasNoValueException(ConfigurationAttribute attribute) {
     super(
-        "Configuration attribute {} was registered and defined as not updateable, however it has no value. The attribute was part of ",
-        attribute, configuration);
+        "Configuration attribute {} was registered and defined as not updateable, however it has no value.",
+        attribute);
   }
 
 }
