@@ -12,14 +12,14 @@
  */
 package net.stickycode.configured;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import java.lang.reflect.Field;
 import java.util.List;
 
+import net.stickycode.stereotype.configured.Configured;
+
 import org.junit.Test;
-
-import net.stickycode.stereotype.Configured;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 public class ConfiguredTest {
 

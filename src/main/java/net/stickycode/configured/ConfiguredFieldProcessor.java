@@ -17,8 +17,8 @@ import java.lang.reflect.Field;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.reflector.AnnotatedFieldProcessor;
-import net.stickycode.stereotype.Configured;
-import net.stickycode.stereotype.ConfiguredStrategy;
+import net.stickycode.stereotype.configured.Configured;
+import net.stickycode.stereotype.configured.ConfiguredStrategy;
 
 public class ConfiguredFieldProcessor
     extends AnnotatedFieldProcessor {

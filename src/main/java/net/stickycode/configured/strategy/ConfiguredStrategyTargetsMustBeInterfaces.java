@@ -2,7 +2,7 @@ package net.stickycode.configured.strategy;
 
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.exception.PermanentException;
-import net.stickycode.stereotype.ConfiguredStrategy;
+import net.stickycode.stereotype.configured.ConfiguredStrategy;
 
 @SuppressWarnings("serial")
 public class ConfiguredStrategyTargetsMustBeInterfaces

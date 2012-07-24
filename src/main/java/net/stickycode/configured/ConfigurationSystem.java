@@ -16,22 +16,25 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import net.stickycode.stereotype.StickyComponent;
+import net.stickycode.bootstrap.AbstractStickySystem;
+import net.stickycode.stereotype.configured.Configured;
+import net.stickycode.stereotype.plugin.StickyExtension;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@StickyComponent
-public class ConfigurationSystem {
+@StickyExtension
+public class ConfigurationSystem
+    extends AbstractStickySystem {
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
   @Inject
   private Set<ConfigurationListener> listeners;
 
-  public void configure() {
+  public void start() {
     log.info("configuration starting");
-    
+
     log.debug("resolving");
     for (ConfigurationListener listener : listeners) {
       listener.resolve();
@@ -58,6 +61,16 @@ public class ConfigurationSystem {
   @Override
   public String toString() {
     return getClass().getSimpleName();
+  }
+
+  @Override
+  public String getLabel() {
+    return Configured.class.getSimpleName();
+  }
+
+  @Override
+  public Package getPackage() {
+    return getClass().getPackage();
   }
 
 }

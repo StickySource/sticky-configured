@@ -12,18 +12,18 @@
  */
 package net.stickycode.configured;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import org.junit.Test;
-
-import net.stickycode.stereotype.Configured;
-import net.stickycode.stereotype.PostConfigured;
-import net.stickycode.stereotype.PreConfigured;
-
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
+import net.stickycode.stereotype.configured.Configured;
+import net.stickycode.stereotype.configured.PostConfigured;
+import net.stickycode.stereotype.configured.PreConfigured;
+
+import org.junit.Test;
 
 public class AroundConfiguredMethodInvocationTest {
 

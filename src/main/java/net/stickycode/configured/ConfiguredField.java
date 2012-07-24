@@ -14,6 +14,7 @@ package net.stickycode.configured;
 
 import static net.stickycode.exception.Preconditions.notNull;
 
+import java.beans.Introspector;
 import java.lang.reflect.Field;
 
 import net.stickycode.bootstrap.ComponentContainer;
@@ -102,7 +103,7 @@ public class ConfiguredField
 
   @Override
   public String join(String delimeter) {
-    return target.getClass().getSimpleName() + delimeter + field.getName();
+    return Introspector.decapitalize(target.getClass().getSimpleName()) + delimeter + field.getName();
   }
 
   @Override
@@ -118,7 +119,9 @@ public class ConfiguredField
   @Override
   public void applyCoercion(CoercionFinder coercions) {
     this.coercion = coercions.find(coercionTarget);
-    this.value = this.coercion.coerce(coercionTarget, resolution.getValue());
+    if (resolution.hasValue()) {
+      this.value = this.coercion.coerce(coercionTarget, resolution.getValue());
+    }
   }
 
   @Override
@@ -137,7 +140,8 @@ public class ConfiguredField
 
   @Override
   public void invertControl(ComponentContainer container) {
-    container.inject(value);
+    if (value != null)
+      container.inject(value);
   }
 
 }

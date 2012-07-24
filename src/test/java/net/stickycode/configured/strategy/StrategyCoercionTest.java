@@ -11,7 +11,7 @@ import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.metadata.MetadataResolver;
 import net.stickycode.metadata.MetadataResolverRegistry;
 import net.stickycode.reflector.Fields;
-import net.stickycode.stereotype.ConfiguredStrategy;
+import net.stickycode.stereotype.configured.ConfiguredStrategy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

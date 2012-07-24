@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import net.stickycode.coercion.AbstractNoDefaultCoercion;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.metadata.MetadataResolverRegistry;
-import net.stickycode.stereotype.ConfiguredStrategy;
 import net.stickycode.stereotype.StickyPlugin;
+import net.stickycode.stereotype.configured.ConfiguredStrategy;
 
 @StickyPlugin
 public class ConfiguredStrategyCoercion

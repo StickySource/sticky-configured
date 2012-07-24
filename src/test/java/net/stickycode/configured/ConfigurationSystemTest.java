@@ -57,7 +57,7 @@ public class ConfigurationSystemTest {
   public void verify() {
     assertThat(listener.order).isEmpty();
 
-    system.configure();
+    system.start();
 
     assertThat(listener.order)
         .containsExactly("resolve", "preConfigure", "configure", "postConfigure");

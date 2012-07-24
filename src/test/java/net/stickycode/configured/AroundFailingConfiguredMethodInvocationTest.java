@@ -17,8 +17,8 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import net.stickycode.stereotype.PostConfigured;
-import net.stickycode.stereotype.PreConfigured;
+import net.stickycode.stereotype.configured.PostConfigured;
+import net.stickycode.stereotype.configured.PreConfigured;
 
 import org.junit.Test;
 

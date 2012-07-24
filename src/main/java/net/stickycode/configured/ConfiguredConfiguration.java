@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.stickycode.reflector.Reflector;
-import net.stickycode.stereotype.PostConfigured;
-import net.stickycode.stereotype.PreConfigured;
+import net.stickycode.stereotype.configured.PostConfigured;
+import net.stickycode.stereotype.configured.PreConfigured;
 
 public class ConfiguredConfiguration
     implements Configuration {
