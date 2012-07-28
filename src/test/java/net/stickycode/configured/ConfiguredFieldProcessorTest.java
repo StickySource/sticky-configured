@@ -30,11 +30,8 @@ public class ConfiguredFieldProcessorTest {
   int primitive;
 
   @Mock
-  private ConfiguredConfiguration configuration;
+  private ConfigurationRepository configuration;
   
-  @Mock
-  private ConfiguredBeanProcessor processor;
-
   @Test(expected=ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException.class)
   public void primitive() throws SecurityException, NoSuchFieldException {
     new ConfiguredFieldProcessor(configuration, null).processField(this, getField("primitive"));
@@ -42,8 +39,8 @@ public class ConfiguredFieldProcessorTest {
 
   @Test
   public void processed() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration, null).processField(this, getField("integer"));
-    verify(configuration).addAttribute(Mockito.any(ConfiguredField.class));
+    new ConfiguredFieldProcessor(configuration, new SimpleNameConfigurationTarget(getClass())).processField(this, getField("integer"));
+    verify(configuration).register(Mockito.any(ConfiguredField.class));
   }
 
   private Field getField(String string) throws SecurityException, NoSuchFieldException {

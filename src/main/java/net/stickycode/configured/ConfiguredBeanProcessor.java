@@ -1,35 +1,28 @@
 package net.stickycode.configured;
 
-import java.beans.Introspector;
-
 import javax.inject.Inject;
 
-import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.configuration.ConfigurationTarget;
 import net.stickycode.reflector.Reflector;
 import net.stickycode.stereotype.StickyFramework;
 import net.stickycode.stereotype.component.StickyService;
 
 @StickyFramework
 @StickyService
-public class ConfiguredBeanProcessor {
+public class ConfiguredBeanProcessor
+    implements ConfigurationMetadataProcessor {
 
   @Inject
   private ConfigurationRepository configurationRepository;
-  
+
   public void process(Object instance) {
-    String name = Introspector.decapitalize(instance.getClass().getSimpleName());
-    process(instance, name, null);
+    process(new SimpleNameConfigurationTarget(instance), instance);
   }
 
-  public void process(Object instance, String name, CoercionTarget parent) {
-    ConfiguredConfiguration configuration = new ConfiguredConfiguration(
-        instance,
-        name);
-    
+  public void process(ConfigurationTarget parent, Object target) {
     new Reflector()
-        .forEachField(new ConfiguredFieldProcessor(configuration, parent))
-        .process(instance);
-    
-    configurationRepository.register(configuration);
+        .forEachField(new ConfiguredFieldProcessor(configurationRepository, parent))
+        .process(target);
   }
+
 }

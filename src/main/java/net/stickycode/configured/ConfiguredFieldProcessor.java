@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.coercion.target.CoercionTargets;
+import net.stickycode.configuration.ConfigurationTarget;
 import net.stickycode.reflector.AnnotatedFieldProcessor;
 import net.stickycode.stereotype.configured.Configured;
 import net.stickycode.stereotype.configured.ConfiguredStrategy;
@@ -23,14 +24,14 @@ import net.stickycode.stereotype.configured.ConfiguredStrategy;
 public class ConfiguredFieldProcessor
     extends AnnotatedFieldProcessor {
 
-  private final ConfiguredConfiguration configuration;
+  private final ConfigurationRepository configuration;
 
-  private CoercionTarget parent;
+  private ConfigurationTarget parent;
 
-  public ConfiguredFieldProcessor(ConfiguredConfiguration configuration, CoercionTarget parent) {
+  public ConfiguredFieldProcessor(ConfigurationRepository configuration, ConfigurationTarget parent2) {
     super(Configured.class, ConfiguredStrategy.class);
     this.configuration = configuration;
-    this.parent = parent;
+    this.parent = parent2;
   }
 
   @Override
@@ -38,14 +39,14 @@ public class ConfiguredFieldProcessor
     if (field.getType().isPrimitive())
       throw new ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException(target, field);
 
-    configuration.addAttribute(new ConfiguredField(target, field, fieldTarget(field)));
+    configuration.register(new ConfiguredField(parent, target, field, fieldTarget(field)));
   }
 
   private CoercionTarget fieldTarget(Field field) {
-    if (parent == null)
+    if (parent.getCoercionTarget() == null)
       return CoercionTargets.find(field);
 
-    return CoercionTargets.find(field, parent);
+    return CoercionTargets.find(field, parent.getCoercionTarget());
   }
 
 }

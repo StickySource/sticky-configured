@@ -14,13 +14,13 @@ package net.stickycode.configured;
 
 import static net.stickycode.exception.Preconditions.notNull;
 
-import java.beans.Introspector;
 import java.lang.reflect.Field;
 
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.configuration.ConfigurationKey;
 import net.stickycode.configuration.ResolvedConfiguration;
 import net.stickycode.exception.NullParameterException;
 import net.stickycode.reflector.Fields;
@@ -44,10 +44,13 @@ public class ConfiguredField
 
   private Coercion<Object> coercion;
 
-  public ConfiguredField(Object target, Field field, CoercionTarget coercionTarget) {
+  private ConfigurationKey name;
+
+  public ConfiguredField(ConfigurationKey name, Object target, Field field, CoercionTarget coercionTarget) {
     this.target = notNull(target, "The target bean for a configured field cannot be null");
     this.field = notNull(field, "A configured field cannot be null");
     this.coercionTarget = notNull(coercionTarget, "A configured field must have a coercion target");
+    this.name = name;
     this.defaultValue = getValue();
   }
 
@@ -59,10 +62,11 @@ public class ConfiguredField
     return Fields.get(target, field);
   }
 
-  @Override
-  public Class<?> getType() {
-    return field.getType();
-  }
+  //
+  // @Override
+  // public Class<?> getType() {
+  // return field.getType();
+  // }
 
   public boolean hasDefaultValue() {
     return defaultValue != null;
@@ -76,10 +80,10 @@ public class ConfiguredField
     Fields.set(target, field, value);
   }
 
-  @Override
-  public String getName() {
-    return field.getName();
-  }
+  // @Override
+  // public String getName() {
+  // return field.getName();
+  // }
 
   @Override
   public String toString() {
@@ -91,19 +95,19 @@ public class ConfiguredField
     return coercionTarget;
   }
 
-  @Override
-  public boolean canBeUpdated() {
-    return true;
-  }
-
-  @Override
-  public boolean hasValue() {
-    return hasBeenSet || hasDefaultValue();
-  }
+  // @Override
+  // public boolean canBeUpdated() {
+  // return true;
+  // }
+  //
+  // @Override
+  // public boolean hasValue() {
+  // return hasBeenSet || hasDefaultValue();
+  // }
 
   @Override
   public String join(String delimeter) {
-    return Introspector.decapitalize(target.getClass().getSimpleName()) + delimeter + field.getName();
+    return name.join(delimeter) + delimeter + field.getName();
   }
 
   @Override
@@ -142,6 +146,17 @@ public class ConfiguredField
   public void invertControl(ComponentContainer container) {
     if (value != null)
       container.inject(value);
+  }
+
+  @Override
+  public Object getTarget() {
+    return target;
+  }
+
+  @Override
+  public void recurse(ConfigurationMetadataProcessor processor) {
+    if (value != null)
+      processor.process(value);
   }
 
 }

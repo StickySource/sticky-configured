@@ -12,9 +12,9 @@
  */
 package net.stickycode.configured;
 
-import static net.stickycode.exception.Preconditions.notBlank;
 import static net.stickycode.exception.Preconditions.notNull;
 
+import java.beans.Introspector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,13 +28,11 @@ public class ConfiguredConfiguration
     implements Configuration {
 
   private final Object target;
-  private final String name;
 
   private final List<ConfigurationAttribute> attributes = new ArrayList<ConfigurationAttribute>();
 
-  public ConfiguredConfiguration(Object instance, String name) {
+  public ConfiguredConfiguration(Object instance) {
     this.target = notNull(instance, "The target object of configuration should not be null");
-    this.name = notBlank(name, "The name of a ConfiguredConfiguration cannot be blank");
   }
 
   @Override
@@ -56,12 +54,7 @@ public class ConfiguredConfiguration
         .process(target);
   }
 
-  @Override
-  public Class<?> getType() {
-    return target.getClass();
-  }
-
-  public void addAttribute(ConfigurationAttribute attribute) {
+  public void register(ConfigurationAttribute attribute) {
     attributes.add(attribute);
   }
 
@@ -70,8 +63,8 @@ public class ConfiguredConfiguration
     return String.format("%s with attributes %s", getName(), attributes);
   }
 
-  public String getName() {
-    return name;
+  private String getName() {
+    return Introspector.decapitalize(target.getClass().getSimpleName());
   }
 
 }

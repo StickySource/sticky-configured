@@ -12,10 +12,11 @@
  */
 package net.stickycode.configured;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.stickycode.stereotype.StickyFramework;
 import net.stickycode.stereotype.component.StickyRepository;
@@ -30,18 +31,34 @@ public class InlineConfigurationRepository
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
-  private List<Configuration> configurations = new ArrayList<Configuration>();
+  private Map<Object, ConfiguredConfiguration> configurations = new HashMap<Object, ConfiguredConfiguration>();
+
+  private ReentrantLock lock = new ReentrantLock();
 
   @Override
   public Iterator<Configuration> iterator() {
-    return Collections.unmodifiableList(configurations).iterator();
+    return new LinkedList<Configuration>(configurations.values()).iterator();
   }
 
   @Override
-  public void register(Configuration configuration) {
-    assert configuration != null;
-    log.info("registering {}", configuration);
-    configurations.add(configuration);
+  public void register(ConfigurationAttribute attribute) {
+    assert attribute != null;
+    log.info("registering {}", attribute);
+    Configuration configuration = getConfiguration(attribute.getTarget());
+    configuration.register(attribute);
+  }
+
+  private Configuration getConfiguration(Object target) {
+    try {
+      lock.lock();
+      if (!configurations.containsKey(target))
+        configurations.put(target, new ConfiguredConfiguration(target));
+
+      return configurations.get(target);
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
 }

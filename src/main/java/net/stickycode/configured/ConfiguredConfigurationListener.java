@@ -12,12 +12,14 @@
  */
 package net.stickycode.configured;
 
+import java.util.LinkedList;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.CoercionFinder;
-import net.stickycode.configuration.ConfigurationResolver;
+import net.stickycode.configuration.ConfigurationTargetResolver;
 import net.stickycode.stereotype.StickyPlugin;
 
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class ConfiguredConfigurationListener
   private Logger log = LoggerFactory.getLogger(getClass());
 
   @Inject
-  private ConfigurationResolver resolver;
+  private ConfigurationTargetResolver resolver;
 
   @Inject
   private CoercionFinder coercions;
@@ -40,6 +42,9 @@ public class ConfiguredConfigurationListener
 
   @Inject
   private ComponentContainer container;
+  
+  @Inject
+  private ConfiguredBeanProcessor beanProcessor;
 
   @PostConstruct
   public void initialise() {
@@ -47,6 +52,15 @@ public class ConfiguredConfigurationListener
   }
 
   public void resolve() {
+    for (Configuration configuration : configurations)
+      for (ConfigurationAttribute attribute : configuration) {
+        resolver.resolve(attribute);
+        attribute.applyCoercion(coercions);
+        attribute.invertControl(container);
+        
+        attribute.recurse(beanProcessor);
+      }
+    
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute attribute : configuration) {
         resolver.resolve(attribute);
