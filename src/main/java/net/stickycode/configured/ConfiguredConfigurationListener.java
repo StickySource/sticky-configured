@@ -12,8 +12,6 @@
  */
 package net.stickycode.configured;
 
-import java.util.LinkedList;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -42,7 +40,7 @@ public class ConfiguredConfigurationListener
 
   @Inject
   private ComponentContainer container;
-  
+
   @Inject
   private ConfiguredBeanProcessor beanProcessor;
 
@@ -57,16 +55,17 @@ public class ConfiguredConfigurationListener
         resolver.resolve(attribute);
         attribute.applyCoercion(coercions);
         attribute.invertControl(container);
-        
+
         attribute.recurse(beanProcessor);
       }
-    
+
     for (Configuration configuration : configurations)
-      for (ConfigurationAttribute attribute : configuration) {
-        resolver.resolve(attribute);
-        attribute.applyCoercion(coercions);
-        attribute.invertControl(container);
-      }
+      for (ConfigurationAttribute attribute : configuration)
+        if (attribute.requiresResolution()) {
+          resolver.resolve(attribute);
+          attribute.applyCoercion(coercions);
+          attribute.invertControl(container);
+        }
   }
 
   public void preConfigure() {

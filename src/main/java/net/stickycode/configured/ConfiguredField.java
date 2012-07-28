@@ -159,4 +159,9 @@ public class ConfiguredField
       processor.process(value);
   }
 
+  @Override
+  public boolean requiresResolution() {
+    return resolution == null;
+  }
+
 }
