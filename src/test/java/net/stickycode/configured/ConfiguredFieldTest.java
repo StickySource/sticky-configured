@@ -18,19 +18,89 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import net.stickycode.coercion.Coercion;
+import net.stickycode.coercion.CoercionFinder;
+import net.stickycode.coercion.CoercionTarget;
+import net.stickycode.coercion.Coercions;
 import net.stickycode.coercion.target.CoercionTargets;
+import net.stickycode.configuration.ConfigurationValue;
+import net.stickycode.configuration.ResolvedConfiguration;
 import net.stickycode.reflector.TriedToAccessFieldButWasDeniedException;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ConfiguredFieldTest {
+
+  
+  public class CoercionWithDefault
+      implements Coercion<Object> {
+
+    @Override
+    public Object coerce(CoercionTarget type, String value) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isApplicableTo(CoercionTarget target) {
+      return true;
+    }
+
+    @Override
+    public boolean hasDefaultValue() {
+      return true;
+    }
+
+    @Override
+    public Object getDefaultValue(CoercionTarget target) {
+      return "coerciondefault";
+    }
+
+  }
+
+  private final class BlahResolution
+      implements ResolvedConfiguration {
+
+    @Override
+    public boolean hasValue() {
+      return true;
+    }
+
+    @Override
+    public String getValue() {
+      return "blah";
+    }
+
+    @Override
+    public void add(ConfigurationValue value) {
+    }
+  }
+
+  private final class NoResolution
+      implements ResolvedConfiguration {
+
+    @Override
+    public boolean hasValue() {
+      return false;
+    }
+
+    @Override
+    public String getValue() {
+      return null;
+    }
+
+    @Override
+    public void add(ConfigurationValue value) {
+    }
+  }
 
   @SuppressWarnings("unused")
   private static class OneField {
 
     private String noDefault;
 
-    private String defaulted = "blah";
+    private String defaulted = "alreadyset";
 
     private Coercion<Pattern> generic;
 
@@ -38,18 +108,50 @@ public class ConfiguredFieldTest {
 
   }
 
-  @Test
-  public void noDefault() throws SecurityException, NoSuchFieldException {
+  @Test(expected=MissingConfigurationException.class)
+  public void noDefaultNoConfig() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("noDefault");
-    assertThat(f.getDefaultValue()).isNull();
-    assertThat(f.getValue()).isNull();
+    f.resolvedWith(new NoResolution());
+    f.applyCoercion(new Coercions());
+    f.update();
+  }
+  
+  @Test
+  public void noDefaultWithConfig() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("noDefault");
+    f.resolvedWith(new BlahResolution());
+    f.applyCoercion(new Coercions());
+    f.update();
+    assertThat(f.getValue()).isEqualTo("blah");
+  }
+  
+  @Test
+  public void noDefaultButCoercionHasOne() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("noDefault");
+    f.resolvedWith(new NoResolution());
+    CoercionFinder finder = mock(CoercionFinder.class);
+    when(finder.find(any(CoercionTarget.class))).thenReturn(new CoercionWithDefault());
+    f.applyCoercion(finder);
+    f.update();
+    assertThat(f.getValue()).isEqualTo("coerciondefault");
   }
 
   @Test
   public void defaulted() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("defaulted");
-    assertThat(f.hasDefaultValue()).isTrue();
-    assertThat(f.getDefaultValue()).isEqualTo("blah");
+    f.resolvedWith(new NoResolution());
+    f.applyCoercion(new Coercions());
+    f.update();
+    assertThat(f.getValue()).isEqualTo("alreadyset");
+    assertThat(f.join(".")).isEqualTo("oneField.defaulted");
+  }
+  
+  @Test
+  public void defaultIsOverridden() throws SecurityException, NoSuchFieldException {
+    ConfiguredField f = configuredField("defaulted");
+    f.resolvedWith(new BlahResolution());
+    f.applyCoercion(new Coercions());
+    f.update();
     assertThat(f.getValue()).isEqualTo("blah");
     assertThat(f.join(".")).isEqualTo("oneField.defaulted");
   }
@@ -60,7 +162,6 @@ public class ConfiguredFieldTest {
     field.setAccessible(false);
     try {
       ConfiguredField f = configuredField(new OneField(), field);
-      assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
     finally {
@@ -78,7 +179,6 @@ public class ConfiguredFieldTest {
     field.setAccessible(true);
     try {
       ConfiguredField f = configuredField(new String(), field);
-      assertThat(f.getDefaultValue()).isNull();
       assertThat(f.getValue()).isNull();
     }
     finally {
@@ -87,31 +187,18 @@ public class ConfiguredFieldTest {
   }
 
   @Test
-  public void setit() throws SecurityException, NoSuchFieldException {
-    ConfiguredField f = configuredField("defaulted");
-    assertThat(f.getDefaultValue()).isEqualTo("blah");
-    assertThat(f.getValue()).isEqualTo("blah");
-    f.setValue("notblah");
-    assertThat(f.getValue()).isEqualTo("notblah");
-  }
-
-  @Test
   public void generic() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("generic");
-    assertThat(f.hasDefaultValue()).isFalse();
-    assertThat(f.getDefaultValue()).isEqualTo(null);
-//    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
-//    assertThat(f.getCoercionTarget().isArray()).isFalse();
-//    assertThat(f.getCoercionTarget().isPrimitive()).isFalse();
+    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
+    assertThat(f.getCoercionTarget().isArray()).isFalse();
+    assertThat(f.getCoercionTarget().isPrimitive()).isFalse();
   }
   
   @Test
   public void floats() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("floats");
-    assertThat(f.hasDefaultValue()).isFalse();
-    assertThat(f.getDefaultValue()).isEqualTo(null);
-//    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
-//    assertThat(f.getCoercionTarget().getComponentCoercionTypes()).containsOnly(CoercionTargets.find(Float.class));
+    assertThat(f.getCoercionTarget().hasComponents()).isTrue();
+    assertThat(f.getCoercionTarget().getComponentCoercionTypes()).containsOnly(CoercionTargets.find(Float.class));
   }
 
   private ConfiguredField configuredField(String name) throws NoSuchFieldException {

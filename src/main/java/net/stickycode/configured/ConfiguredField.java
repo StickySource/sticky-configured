@@ -22,7 +22,6 @@ import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.configuration.ConfigurationKey;
 import net.stickycode.configuration.ResolvedConfiguration;
-import net.stickycode.exception.NullParameterException;
 import net.stickycode.reflector.Fields;
 
 public class ConfiguredField
@@ -54,36 +53,9 @@ public class ConfiguredField
     this.defaultValue = getValue();
   }
 
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
   public Object getValue() {
     return Fields.get(target, field);
   }
-
-  //
-  // @Override
-  // public Class<?> getType() {
-  // return field.getType();
-  // }
-
-  public boolean hasDefaultValue() {
-    return defaultValue != null;
-  }
-
-  public void setValue(Object value) {
-    if (value == null)
-      throw new NullParameterException("Cannot set {} to null", field);
-
-    this.hasBeenSet = true;
-    Fields.set(target, field, value);
-  }
-
-  // @Override
-  // public String getName() {
-  // return field.getName();
-  // }
 
   @Override
   public String toString() {
@@ -94,16 +66,6 @@ public class ConfiguredField
   public CoercionTarget getCoercionTarget() {
     return coercionTarget;
   }
-
-  // @Override
-  // public boolean canBeUpdated() {
-  // return true;
-  // }
-  //
-  // @Override
-  // public boolean hasValue() {
-  // return hasBeenSet || hasDefaultValue();
-  // }
 
   @Override
   public String join(String delimeter) {
