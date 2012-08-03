@@ -9,14 +9,16 @@ import net.stickycode.stereotype.component.StickyService;
 
 @StickyFramework
 @StickyService
-public class ConfiguredBeanProcessor
-    implements ConfigurationMetadataProcessor {
+public class ConfiguredBeanProcessor {
 
   @Inject
   private ConfigurationRepository configurationRepository;
 
   public void process(Object instance) {
-    process(new SimpleNameConfigurationTarget(instance), instance);
+    if (instance instanceof ConfigurationTarget)
+      process((ConfigurationTarget) instance, instance);
+    else
+      process(new SimpleNameConfigurationTarget(instance), instance);
   }
 
   public void process(ConfigurationTarget parent, Object target) {

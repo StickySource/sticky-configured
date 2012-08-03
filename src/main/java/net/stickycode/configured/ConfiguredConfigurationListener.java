@@ -50,18 +50,19 @@ public class ConfiguredConfigurationListener
   }
 
   public void resolve() {
+    log.debug("starting resolution");
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute attribute : configuration) {
+        log.debug("resolve {}", attribute);
         resolver.resolve(attribute);
         attribute.applyCoercion(coercions);
         attribute.invertControl(container);
-
-        attribute.recurse(beanProcessor);
       }
 
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute attribute : configuration)
         if (attribute.requiresResolution()) {
+          log.debug("resolve second pass {}", attribute);
           resolver.resolve(attribute);
           attribute.applyCoercion(coercions);
           attribute.invertControl(container);

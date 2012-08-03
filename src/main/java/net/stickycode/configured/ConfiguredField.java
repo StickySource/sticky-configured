@@ -85,23 +85,29 @@ public class ConfiguredField
   @Override
   public void applyCoercion(CoercionFinder coercions) {
     this.coercion = coercions.find(coercionTarget);
-    if (resolution.hasValue()) {
-      this.value = this.coercion.coerce(coercionTarget, resolution.getValue());
-    }
+    this.value = resolveValue();
+  }
+
+  private Object resolveValue() {
+    if (resolution.hasValue())
+      return this.coercion.coerce(coercionTarget, resolution.getValue());
+
+    if (coercion.hasDefaultValue())
+      return coercion.getDefaultValue(coercionTarget);
+
+    // no useful values so its still null
+    return null;
   }
 
   @Override
   public void update() {
-    if (value != null) {
+    if (value != null)
       Fields.set(target, field, value);
-    }
+    
     else
-      if (coercion.hasDefaultValue())
-        Fields.set(target, field, coercion.getDefaultValue(coercionTarget));
-      else
-        if (defaultValue == null) {
-          throw new MissingConfigurationException(this, resolution);
-        }
+      if (defaultValue == null)
+        throw new MissingConfigurationException(this, resolution);
+
   }
 
   @Override
@@ -113,12 +119,6 @@ public class ConfiguredField
   @Override
   public Object getTarget() {
     return target;
-  }
-
-  @Override
-  public void recurse(ConfigurationMetadataProcessor processor) {
-    if (value != null)
-      processor.process(value);
   }
 
   @Override
