@@ -33,5 +33,10 @@ public class SimpleNameConfigurationTarget
   public CoercionTarget getCoercionTarget() {
     return null;
   }
+  
+  @Override
+  public String toString() {
+    return name;
+  }
 
 }
