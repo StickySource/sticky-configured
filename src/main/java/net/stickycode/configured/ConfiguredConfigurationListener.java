@@ -53,9 +53,11 @@ public class ConfiguredConfigurationListener
     log.debug("starting resolution");
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute attribute : configuration) {
-        log.debug("resolve {}", attribute);
-        resolver.resolve(attribute);
-        attribute.applyCoercion(coercions);
+        if (attribute.requiresResolution()) {
+          log.debug("resolve {}", attribute);
+          resolver.resolve(attribute);
+          attribute.applyCoercion(coercions);
+        }
         attribute.invertControl(container);
       }
 
