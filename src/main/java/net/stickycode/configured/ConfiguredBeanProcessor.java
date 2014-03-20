@@ -15,6 +15,8 @@ public class ConfiguredBeanProcessor {
   private ConfigurationRepository configurationRepository;
 
   public void process(Object instance) {
+    configurationRepository.register(new ForMethodOnlyBeansDummyAttribute(instance));
+
     if (instance instanceof ConfigurationTarget)
       process((ConfigurationTarget) instance, instance);
     else
