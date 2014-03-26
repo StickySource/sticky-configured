@@ -43,8 +43,8 @@ public class InlineConfigurationRepository
   @Override
   public void register(ConfigurationAttribute attribute) {
     assert attribute != null;
-    log.info("registering {}", attribute);
     Configuration configuration = getConfiguration(attribute.getTarget());
+    log.info("registering {} for {} on {}", new Object[] { attribute, attribute.getTarget(), configuration });
     configuration.register(attribute);
   }
 
