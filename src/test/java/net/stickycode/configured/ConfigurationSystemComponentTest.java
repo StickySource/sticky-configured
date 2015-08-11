@@ -16,6 +16,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
 import net.stickycode.coercion.Coercions;
 import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.configuration.ConfigurationTargetResolver;
@@ -38,22 +41,22 @@ public class ConfigurationSystemComponentTest {
 
   @Mock
   Configuration configuration;
-  
+
   @Mock
   ConfigurationTargetResolver resolver;
-  
+
   @Spy
   Coercions coercions = new Coercions();
-  
+
   @InjectMocks
   ConfiguredConfigurationListener configurationSystem = new ConfiguredConfigurationListener();
 
   @Before
   public void before() {
 //    when(attribute.getCoercionTarget()).thenReturn(CoercionTargets.find(String.class));
-    when(attribute.join(".")).thenReturn("bean.field");
+    when(attribute.join(".")).thenReturn(Collections.singletonList("bean.field"));
   }
-  
+
   @Test(expected = MissingConfigurationException.class)
   @Ignore
   public void missingConfigurationExcepts() {
@@ -70,9 +73,9 @@ public class ConfigurationSystemComponentTest {
     when(mock.getValue()).thenReturn("a");
     when(mock.hasValue()).thenReturn(true);
     when(attribute.getResolution()).thenReturn(mock);
-    
+
     configurationSystem.updateAttribute(attribute);
-    
+
     verify(attribute).update();
   }
 

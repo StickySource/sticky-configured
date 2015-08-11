@@ -15,6 +15,9 @@ package net.stickycode.configured;
 import static net.stickycode.exception.Preconditions.notNull;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.Coercion;
@@ -59,7 +62,7 @@ public class ConfiguredField
 
   @Override
   public String toString() {
-    return join(".");
+    return join(".").get(0);
   }
 
   @Override
@@ -68,8 +71,10 @@ public class ConfiguredField
   }
 
   @Override
-  public String join(String delimeter) {
-    return name.join(delimeter) + delimeter + field.getName();
+  public List<String> join(String delimeter) {
+    return name.join(delimeter).stream()
+        .map(s -> s + delimeter + field.getName())
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -103,7 +108,7 @@ public class ConfiguredField
   public void update() {
     if (value != null)
       Fields.set(target, field, value);
-    
+
     else
       if (defaultValue == null)
         throw new MissingConfigurationException(this, resolution);

@@ -26,14 +26,14 @@ import net.stickycode.configuration.ConfigurationValue;
 import net.stickycode.configuration.ResolvedConfiguration;
 import net.stickycode.reflector.TriedToAccessFieldButWasDeniedException;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConfiguredFieldTest {
 
-  
+
   public class CoercionWithDefault
       implements Coercion<Object> {
 
@@ -115,7 +115,7 @@ public class ConfiguredFieldTest {
     f.applyCoercion(new Coercions());
     f.update();
   }
-  
+
   @Test
   public void noDefaultWithConfig() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("noDefault");
@@ -124,7 +124,7 @@ public class ConfiguredFieldTest {
     f.update();
     assertThat(f.getValue()).isEqualTo("blah");
   }
-  
+
   @Test
   public void noDefaultButCoercionHasOne() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("noDefault");
@@ -143,9 +143,9 @@ public class ConfiguredFieldTest {
     f.applyCoercion(new Coercions());
     f.update();
     assertThat(f.getValue()).isEqualTo("alreadyset");
-    assertThat(f.join(".")).isEqualTo("oneField.defaulted");
+    assertThat(f.join(".")).containsOnly("oneField.defaulted");
   }
-  
+
   @Test
   public void defaultIsOverridden() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("defaulted");
@@ -153,7 +153,7 @@ public class ConfiguredFieldTest {
     f.applyCoercion(new Coercions());
     f.update();
     assertThat(f.getValue()).isEqualTo("blah");
-    assertThat(f.join(".")).isEqualTo("oneField.defaulted");
+    assertThat(f.join(".")).containsOnly("oneField.defaulted");
   }
 
   @Test
@@ -193,7 +193,7 @@ public class ConfiguredFieldTest {
     assertThat(f.getCoercionTarget().isArray()).isFalse();
     assertThat(f.getCoercionTarget().isPrimitive()).isFalse();
   }
-  
+
   @Test
   public void floats() throws SecurityException, NoSuchFieldException {
     ConfiguredField f = configuredField("floats");

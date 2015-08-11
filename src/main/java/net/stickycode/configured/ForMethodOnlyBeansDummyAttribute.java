@@ -1,6 +1,7 @@
 package net.stickycode.configured;
 
 import java.beans.Introspector;
+import java.util.List;
 
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.CoercionFinder;
@@ -26,7 +27,7 @@ public class ForMethodOnlyBeansDummyAttribute
   }
 
   @Override
-  public String join(String delimeter) {
+  public List<String> join(String delimeter) {
     return null;
   }
 
