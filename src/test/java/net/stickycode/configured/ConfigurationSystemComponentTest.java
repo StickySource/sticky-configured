@@ -13,16 +13,10 @@
 package net.stickycode.configured;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-
-import net.stickycode.coercion.Coercions;
-import net.stickycode.coercion.target.CoercionTargets;
-import net.stickycode.configuration.ConfigurationTargetResolver;
-import net.stickycode.configuration.ResolvedConfiguration;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,6 +26,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import net.stickycode.coercion.Coercions;
+import net.stickycode.configuration.ConfigurationTargetResolver;
+import net.stickycode.configuration.ResolvedConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationSystemComponentTest {

@@ -24,8 +24,8 @@ import net.stickycode.stereotype.component.StickyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@StickyRepository
 @StickyFramework
+@StickyRepository
 public class InlineConfigurationRepository
     implements ConfigurationRepository {
 

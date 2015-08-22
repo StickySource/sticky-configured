@@ -41,9 +41,6 @@ public class ConfiguredConfigurationListener
   @Inject
   private ComponentContainer container;
 
-  @Inject
-  private ConfiguredBeanProcessor beanProcessor;
-
   @PostConstruct
   public void initialise() {
     log.info(" resolving values with {} and coercing with {}", resolver, coercions);
