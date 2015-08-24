@@ -1,35 +1,35 @@
 package net.stickycode.configured.strategy;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.StrictAssertions.assertThat;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Tested;
 import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.metadata.MetadataResolver;
 import net.stickycode.metadata.MetadataResolverRegistry;
 import net.stickycode.reflector.Fields;
 import net.stickycode.stereotype.configured.ConfiguredStrategy;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
 public class StrategyCoercionTest {
 
-  @Mock
-  MetadataResolverRegistry registery;
+  @Injectable
+  MetadataResolverRegistry registry;
 
-  @Mock
+  @Injectable
   MetadataResolver resolver;
 
-  @InjectMocks
-  ConfiguredStrategyCoercion coercion = new ConfiguredStrategyCoercion();
+  @Injectable
+  StrategyFinder finder;
+
+  @Tested
+  ConfiguredStrategyCoercion coercion;
 
   private static interface Interface {
 
@@ -37,6 +37,17 @@ public class StrategyCoercionTest {
 
   private Interface field;
 
+
+  @Before
+  public void setup () {
+    new Expectations() {
+      {
+        registry.is(withInstanceOf(AnnotatedElement.class));
+        result = resolver;
+        minTimes = 0;
+      }
+    };
+  }
   @Test
   public void strategyCoercionsDontHaveDefaultValues() {
     assertThat(coercion.hasDefaultValue()).isFalse();
@@ -44,26 +55,29 @@ public class StrategyCoercionTest {
 
   @Test
   public void stringsAreNotStrategies() {
-    when(registery.is(any(AnnotatedElement.class))).thenReturn(resolver);
     assertThat(coercion.isApplicableTo(CoercionTargets.find(String.class))).isFalse();
   }
 
   @Test
   public void plainOldInterfaceTargetsDontApply() {
-    when(registery.is(any(AnnotatedElement.class))).thenReturn(resolver);
     assertThat(coercion.isApplicableTo(CoercionTargets.find(Interface.class))).isFalse();
   }
 
   @Test
   public void nonAnnotatedFieldsArentApplicable() {
-    when(registery.is(any(AnnotatedElement.class))).thenReturn(resolver);
     assertThat(coercion.isApplicableTo(CoercionTargets.find(field()))).isFalse();
   }
 
   @Test
   public void annotatedFieldsAreApplicable() {
-    when(registery.is(any(AnnotatedElement.class))).thenReturn(resolver);
-    when(resolver.metaAnnotatedWith(ConfiguredStrategy.class)).thenReturn(true);
+
+
+    new Expectations() {
+      {
+        resolver.metaAnnotatedWith(withEqual(ConfiguredStrategy.class));
+        result = true;
+      }
+    };
     assertThat(coercion.isApplicableTo(CoercionTargets.find(field()))).isTrue();
   }
 

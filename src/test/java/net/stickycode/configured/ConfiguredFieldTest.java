@@ -12,11 +12,16 @@
  */
 package net.stickycode.configured;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
+
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import mockit.Expectations;
+import mockit.Mocked;
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.coercion.CoercionTarget;
@@ -25,11 +30,6 @@ import net.stickycode.coercion.target.CoercionTargets;
 import net.stickycode.configuration.ConfigurationValue;
 import net.stickycode.configuration.ResolvedConfiguration;
 import net.stickycode.reflector.TriedToAccessFieldButWasDeniedException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ConfiguredFieldTest {
 
@@ -126,11 +126,15 @@ public class ConfiguredFieldTest {
   }
 
   @Test
-  public void noDefaultButCoercionHasOne() throws SecurityException, NoSuchFieldException {
+  public void noDefaultButCoercionHasOne(@Mocked CoercionFinder finder) throws SecurityException, NoSuchFieldException {
+    new Expectations() {
+      {
+        finder.find(withInstanceOf(CoercionTarget.class));
+        result = new CoercionWithDefault();
+      }
+    };
     ConfiguredField f = configuredField("noDefault");
     f.resolvedWith(new NoResolution());
-    CoercionFinder finder = mock(CoercionFinder.class);
-    when(finder.find(any(CoercionTarget.class))).thenReturn(new CoercionWithDefault());
     f.applyCoercion(finder);
     f.update();
     assertThat(f.getValue()).isEqualTo("coerciondefault");

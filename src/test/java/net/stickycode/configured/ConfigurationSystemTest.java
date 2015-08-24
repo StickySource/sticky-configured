@@ -9,23 +9,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+import mockit.Injectable;
+import mockit.Tested;
+
 public class ConfigurationSystemTest {
 
   private VerifyingListener listener = new VerifyingListener();
 
-  @SuppressWarnings("unused")
-  @Spy
-  private Set<VerifyingListener> listeners =
-      new HashSet<ConfigurationSystemTest.VerifyingListener>(Arrays.asList(listener));
+  @Injectable
+  private Set<ConfigurationListener> listeners =
+      new HashSet<ConfigurationListener>(Arrays.asList(listener));
 
-  @InjectMocks
-  private ConfigurationSystem system = new ConfigurationSystem();
+  @Tested
+  private ConfigurationSystem system;
 
   public static class VerifyingListener
       implements ConfigurationListener {

@@ -12,18 +12,18 @@
  */
 package net.stickycode.configured;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.StrictAssertions.assertThat;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import org.junit.Test;
+
+import mockit.Mocked;
+import mockit.Verifications;
 import net.stickycode.stereotype.configured.Configured;
 import net.stickycode.stereotype.configured.PostConfigured;
 import net.stickycode.stereotype.configured.PreConfigured;
-
-import org.junit.Test;
 
 public class AroundConfiguredMethodInvocationTest {
 
@@ -91,19 +91,26 @@ public class AroundConfiguredMethodInvocationTest {
   }
 
   @Test
-  public void preconfigured() throws SecurityException, NoSuchMethodException {
-    Sample s = mock(Sample.class);
+  public void preconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
     Method m = method("preconfigured");
     new InvokingAnnotatedMethodProcessor(PreConfigured.class).processMethod(s, m);
-    verify(s).preconfigured();
+
+    new Verifications() {
+      {
+        s.preconfigured();
+      }
+    };
   }
 
   @Test
-  public void postconfigured() throws SecurityException, NoSuchMethodException {
-    Sample s = mock(Sample.class);
+  public void postconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
     Method m = method("postconfigured");
     new InvokingAnnotatedMethodProcessor(PostConfigured.class).processMethod(s, m);
-    verify(s).postconfigured();
+    new Verifications() {
+      {
+        s.postconfigured();
+      }
+    };
   }
 
   private Method method(String methodName) throws NoSuchMethodException {

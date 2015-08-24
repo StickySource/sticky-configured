@@ -12,35 +12,37 @@
  */
 package net.stickycode.configured;
 
-import static org.mockito.Mockito.verify;
-
 import java.lang.reflect.Field;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import mockit.Mocked;
+import mockit.Verifications;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfiguredFieldProcessorTest {
 
   Integer integer;
+
   int primitive;
 
-  @Mock
+  @Mocked
   private ConfigurationRepository configuration;
-  
-  @Test(expected=ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException.class)
+
+  @Test(expected = ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException.class)
   public void primitive() throws SecurityException, NoSuchFieldException {
     new ConfiguredFieldProcessor(configuration, null).processField(this, getField("primitive"));
   }
 
   @Test
   public void processed() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration, new SimpleNameConfigurationTarget(getClass())).processField(this, getField("integer"));
-    verify(configuration).register(Mockito.any(ConfiguredField.class));
+    new ConfiguredFieldProcessor(configuration, new SimpleNameConfigurationTarget(getClass())).processField(this,
+        getField("integer"));
+
+    new Verifications() {
+      {
+        configuration.register(withNotNull());
+      }
+    };
   }
 
   private Field getField(String string) throws SecurityException, NoSuchFieldException {

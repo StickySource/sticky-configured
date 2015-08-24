@@ -12,54 +12,50 @@
  */
 package net.stickycode.configured;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.Tested;
 import net.stickycode.coercion.Coercions;
 import net.stickycode.configuration.ConfigurationTargetResolver;
-import net.stickycode.configuration.ResolvedConfiguration;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigurationSystemComponentTest {
 
-  @Mock
+  @Injectable
   ConfigurationAttribute attribute;
 
-  @Mock
+  @Injectable
   Configuration configuration;
 
-  @Mock
+  @Injectable
   ConfigurationTargetResolver resolver;
 
-  @Spy
+  @Injectable
   Coercions coercions = new Coercions();
 
-  @InjectMocks
-  ConfiguredConfigurationListener configurationSystem = new ConfiguredConfigurationListener();
+  @Tested
+  ConfiguredConfigurationListener configurationSystem;
 
   @Before
   public void before() {
-//    when(attribute.getCoercionTarget()).thenReturn(CoercionTargets.find(String.class));
-    when(attribute.join(".")).thenReturn(Collections.singletonList("bean.field"));
+    new Expectations() {
+      {
+        attribute.join(".");
+        result = Collections.singletonList("bean.field");
+      }
+    };
   }
 
   @Test(expected = MissingConfigurationException.class)
   @Ignore
   public void missingConfigurationExcepts() {
-    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
-    when(attribute.getResolution()).thenReturn(mock);
+//    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
+//    when(attribute.getResolution()).thenReturn(mock);
     configurationSystem.updateAttribute(attribute);
   }
 
@@ -67,23 +63,23 @@ public class ConfigurationSystemComponentTest {
   @Ignore
   public void processAttribute() {
 
-    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
-    when(mock.getValue()).thenReturn("a");
-    when(mock.hasValue()).thenReturn(true);
-    when(attribute.getResolution()).thenReturn(mock);
+//    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
+//    when(mock.getValue()).thenReturn("a");
+//    when(mock.hasValue()).thenReturn(true);
+//    when(attribute.getResolution()).thenReturn(mock);
 
     configurationSystem.updateAttribute(attribute);
 
-    verify(attribute).update();
+//    verify(attribute).update();
   }
 
   @Test
   @Ignore
   public void leaveDefaultValue() {
-    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
-    when(attribute.getResolution()).thenReturn(mock);
-//    when(attribute.hasDefaultValue()).thenReturn(true);
+//    ResolvedConfiguration mock = mock(ResolvedConfiguration.class);
+//    when(attribute.getResolution()).thenReturn(mock);
+    // when(attribute.hasDefaultValue()).thenReturn(true);
     configurationSystem.updateAttribute(attribute);
-//    verify(attribute, times(0)).setValue("a");
+    // verify(attribute, times(0)).setValue("a");
   }
 }
