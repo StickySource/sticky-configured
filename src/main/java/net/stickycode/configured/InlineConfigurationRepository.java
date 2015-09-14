@@ -18,11 +18,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.stickycode.stereotype.StickyFramework;
-import net.stickycode.stereotype.component.StickyRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.stickycode.stereotype.StickyFramework;
+import net.stickycode.stereotype.component.StickyRepository;
 
 @StickyFramework
 @StickyRepository
@@ -59,6 +59,11 @@ public class InlineConfigurationRepository
     finally {
       lock.unlock();
     }
+  }
+
+  @Override
+  public String toString() {
+    return configurations.values().toString();
   }
 
 }

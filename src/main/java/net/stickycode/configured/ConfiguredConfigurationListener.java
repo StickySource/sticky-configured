@@ -15,13 +15,13 @@ package net.stickycode.configured;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.configuration.ConfigurationTargetResolver;
 import net.stickycode.stereotype.StickyPlugin;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @StickyPlugin
 public class ConfiguredConfigurationListener
@@ -46,6 +46,7 @@ public class ConfiguredConfigurationListener
     log.info(" resolving values with {} and coercing with {}", resolver, coercions);
   }
 
+  @Override
   public void resolve() {
     log.debug("starting resolution");
     for (Configuration configuration : configurations)
@@ -68,16 +69,20 @@ public class ConfiguredConfigurationListener
         }
   }
 
+  @Override
   public void preConfigure() {
     for (Configuration configuration : configurations)
       configuration.preConfigure();
   }
 
+  @Override
   public void configure() {
+    log.debug("configurations {}", configurations);
     for (Configuration configuration : configurations)
       configure(configuration);
   }
 
+  @Override
   public void postConfigure() {
     for (Configuration configuration : configurations)
       configuration.postConfigure();
