@@ -10,7 +10,7 @@
 
 	<groupId>net.stickycode.configured</groupId>
 	<artifactId>sticky-configured</artifactId>
-	<version>6.4-SNAPSHOT</version>
+	<version>6.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>sticky-configured-6</name>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>net.stickycode</groupId>
 			<artifactId>sticky-reflector</artifactId>
-			<version>[3.2,4)</version>
+			<version>[3.3,4)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode</groupId>
