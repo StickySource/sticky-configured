@@ -12,14 +12,14 @@
  */
 package net.stickycode.configured;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-import net.stickycode.stereotype.configured.Configured;
-
 import org.junit.Test;
+
+import net.stickycode.stereotype.configured.Configured;
 
 public class ConfiguredTest {
 
@@ -55,7 +55,7 @@ public class ConfiguredTest {
   }
 
   private boolean canProcess(String fieldName) {
-    ConfiguredFieldProcessor configuredFieldProcessor = new ConfiguredFieldProcessor(null, null);
+    ConfiguredFieldProcessor configuredFieldProcessor = new ConfiguredFieldProcessor(null, new ConfiguredAnnotations(), null);
     return configuredFieldProcessor.canProcess(getField(fieldName));
   }
 

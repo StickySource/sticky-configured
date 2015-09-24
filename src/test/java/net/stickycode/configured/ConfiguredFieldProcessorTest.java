@@ -30,12 +30,12 @@ public class ConfiguredFieldProcessorTest {
 
   @Test(expected = ConfiguredFieldsMustNotBePrimitiveAsDefaultDerivationIsImpossibleException.class)
   public void primitive() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration, null).processField(this, getField("primitive"));
+    new ConfiguredFieldProcessor(configuration, new ConfiguredAnnotations(), null).processField(this, getField("primitive"));
   }
 
   @Test
   public void processed() throws SecurityException, NoSuchFieldException {
-    new ConfiguredFieldProcessor(configuration, new SimpleNameConfigurationTarget(getClass())).processField(this,
+    new ConfiguredFieldProcessor(configuration,  new ConfiguredAnnotations(),new SimpleNameConfigurationTarget(getClass())).processField(this,
         getField("integer"));
 
     new Verifications() {

@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.assertThat;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
@@ -174,7 +175,7 @@ public class ConfiguredFieldTest {
   }
 
   private ConfiguredField configuredField(Object target, Field field) {
-    return new ConfiguredField(new SimpleNameConfigurationTarget(target), target, field, CoercionTargets.find(field));
+    return new ConfiguredField(new SimpleNameConfigurationTarget(target), target, field, CoercionTargets.find(field), Collections.emptyList());
   }
 
   @Test(expected = TriedToAccessFieldButWasDeniedException.class)

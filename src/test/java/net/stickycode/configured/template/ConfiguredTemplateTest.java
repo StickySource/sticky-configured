@@ -1,10 +1,14 @@
 package net.stickycode.configured.template;
 
+import static org.assertj.core.api.StrictAssertions.assertThat;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import mockit.Injectable;
 import mockit.Tested;
 import net.stickycode.configured.ConfigurationRepository;
+import net.stickycode.configured.ConfiguredAnnotations;
 import net.stickycode.configured.ConfiguredBeanProcessor;
 
 /**
@@ -29,11 +33,17 @@ public class ConfiguredTemplateTest {
   @Injectable
   ConfigurationRepository repository;
 
+  @Injectable
+  ConfiguredAnnotations annotations;
+
   @Tested
   ConfiguredBeanProcessor configuredBeanProcessor;
 
   @Test
+  @Ignore("really?")
   public void templated() {
-    configuredBeanProcessor.process(new SampleTemplate());
+    SampleTemplate template = new SampleTemplate();
+    configuredBeanProcessor.process(template);
+    assertThat(template.value).isNotNull();
   }
 }

@@ -4,8 +4,8 @@ import net.stickycode.stereotype.configured.Configured;
 
 
 public class AbstractTemplate {
-  
+
   @Configured
-  private Integer value;
+  Integer value;
 
 }

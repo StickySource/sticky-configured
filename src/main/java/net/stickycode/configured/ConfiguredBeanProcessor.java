@@ -14,6 +14,9 @@ public class ConfiguredBeanProcessor {
   @Inject
   private ConfigurationRepository configurationRepository;
 
+  @Inject
+  private ConfiguredAnnotations annotations;
+
   public void process(Object instance) {
     configurationRepository.register(new ForMethodOnlyBeansDummyAttribute(instance));
 
@@ -25,7 +28,7 @@ public class ConfiguredBeanProcessor {
 
   public void process(ConfigurationTarget parent, Object target) {
     new Reflector()
-        .forEachField(new ConfiguredFieldProcessor(configurationRepository, parent))
+        .forEachField(new ConfiguredFieldProcessor(configurationRepository, annotations, parent))
         .process(target);
   }
 

@@ -12,17 +12,18 @@
  */
 package net.stickycode.configured;
 
-import static net.stickycode.exception.Preconditions.notNull;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.stickycode.bootstrap.ComponentContainer;
 import net.stickycode.coercion.Coercion;
 import net.stickycode.coercion.CoercionFinder;
 import net.stickycode.coercion.CoercionTarget;
 import net.stickycode.configuration.ConfigurationKey;
+import net.stickycode.configuration.ConfigurationValue;
 import net.stickycode.configuration.ResolvedConfiguration;
 import net.stickycode.reflector.Fields;
 
@@ -37,21 +38,23 @@ public class ConfiguredField
 
   private final CoercionTarget coercionTarget;
 
-  private boolean hasBeenSet = false;
-
   private ResolvedConfiguration resolution;
 
   private Object value;
 
   private Coercion<Object> coercion;
 
-  private ConfigurationKey name;
+  private ConfigurationKey namespace;
 
-  public ConfiguredField(ConfigurationKey name, Object target, Field field, CoercionTarget coercionTarget) {
-    this.target = notNull(target, "The target bean for a configured field cannot be null");
-    this.field = notNull(field, "A configured field cannot be null");
-    this.coercionTarget = notNull(coercionTarget, "A configured field must have a coercion target");
-    this.name = name;
+  private List<ConfigurationValue> defaultConfigurations;
+
+  public ConfiguredField(ConfigurationKey namespace, Object target, Field field, CoercionTarget coercionTarget,
+      List<ConfigurationValue> defaultConfigurations) {
+    this.target = requireNonNull(target, "The target bean for a configured field cannot be null");
+    this.field = requireNonNull(field, "A configured field cannot be null");
+    this.coercionTarget = requireNonNull(coercionTarget, "A configured field must have a coercion target");
+    this.namespace = namespace;
+    this.defaultConfigurations = defaultConfigurations;
     this.defaultValue = getValue();
   }
 
@@ -71,9 +74,11 @@ public class ConfiguredField
 
   @Override
   public List<String> join(String delimeter) {
-    return name.join(delimeter).stream()
-        .map(s -> s + delimeter + field.getName())
-        .collect(Collectors.toList());
+    List<String> keys = new ArrayList<String>();
+    for (String key : namespace.join(delimeter))
+      keys.add(key + delimeter + field.getName());
+
+    return keys;
   }
 
   @Override
@@ -128,6 +133,13 @@ public class ConfiguredField
   @Override
   public boolean requiresResolution() {
     return resolution == null;
+  }
+
+  @Override
+  public void apply(ResolvedConfiguration resolution) {
+    for (ConfigurationValue configurationValue : defaultConfigurations) {
+      resolution.add(configurationValue);
+    }
   }
 
 }
