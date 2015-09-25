@@ -55,7 +55,7 @@ public class ConfiguredTest {
   }
 
   private boolean canProcess(String fieldName) {
-    ConfiguredFieldProcessor configuredFieldProcessor = new ConfiguredFieldProcessor(null, new ConfiguredAnnotations(), null);
+    ConfiguredFieldProcessor configuredFieldProcessor = new ConfiguredFieldProcessor(null, new ConfiguredMetadata(), null);
     return configuredFieldProcessor.canProcess(getField(fieldName));
   }
 

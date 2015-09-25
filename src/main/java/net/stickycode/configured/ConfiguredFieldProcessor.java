@@ -61,7 +61,7 @@ public class ConfiguredFieldProcessor
   private Map<Class<? extends Annotation>, Method> defaultSeeds;
 
 
-  public ConfiguredFieldProcessor(ConfigurationRepository configuration, ConfiguredAnnotations annotations,
+  public ConfiguredFieldProcessor(ConfigurationRepository configuration, ConfiguredMetadata annotations,
       ConfigurationTarget parent2) {
     super(annotations.getConfiguredAnnotations());
     this.configuration = configuration;

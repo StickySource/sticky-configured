@@ -15,7 +15,7 @@ public class ConfiguredBeanProcessor {
   private ConfigurationRepository configurationRepository;
 
   @Inject
-  private ConfiguredAnnotations annotations;
+  private ConfiguredMetadata annotations;
 
   public void process(Object instance) {
     configurationRepository.register(new ForMethodOnlyBeansDummyAttribute(instance));

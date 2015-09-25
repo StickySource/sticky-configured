@@ -5,17 +5,26 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.LoggerFactory;
 
+import net.stickycode.metadata.MetadataResolverRegistry;
 import net.stickycode.reflector.AnnotationFinder;
 import net.stickycode.stereotype.StickyComponent;
 import net.stickycode.stereotype.StickyFramework;
+import net.stickycode.stereotype.configured.PostConfigured;
+import net.stickycode.stereotype.configured.PreConfigured;
 
 @StickyComponent
 @StickyFramework
-public class ConfiguredAnnotations {
+public class ConfiguredMetadata {
 
   private static Class<? extends Annotation>[] configuredAnnotations;
+
+  @SuppressWarnings("unchecked")
+  private static Class<? extends Annotation>[] configuredLifecycleAnnotations = new Class[] { PreConfigured.class,
+      PostConfigured.class };
 
   private static Map<Class<? extends Annotation>, Method> defaultSeeds = new HashMap<>();
 
@@ -34,11 +43,33 @@ public class ConfiguredAnnotations {
     }
   }
 
+  @Inject
+  MetadataResolverRegistry metdataResolverRegistry;
+
   public Class<? extends Annotation>[] getConfiguredAnnotations() {
     return configuredAnnotations;
+  }
+
+  public Class<? extends Annotation>[] getConfiguredLifecycleAnnotations() {
+    return configuredLifecycleAnnotations;
   }
 
   public Map<Class<? extends Annotation>, Method> getDefaultSeeds() {
     return defaultSeeds;
   }
+
+  public boolean typeIsConfigured(Class<?> type) {
+    if (metdataResolverRegistry
+        .does(type)
+        .haveAnyFieldsMetaAnnotatedWith(getConfiguredAnnotations()))
+      return true;
+
+    if (metdataResolverRegistry
+        .does(type)
+        .haveAnyMethodsMetaAnnotatedWith(getConfiguredLifecycleAnnotations()))
+      return true;
+
+    return false;
+  }
+
 }

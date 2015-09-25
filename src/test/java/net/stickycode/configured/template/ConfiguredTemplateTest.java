@@ -8,7 +8,7 @@ import org.junit.Test;
 import mockit.Injectable;
 import mockit.Tested;
 import net.stickycode.configured.ConfigurationRepository;
-import net.stickycode.configured.ConfiguredAnnotations;
+import net.stickycode.configured.ConfiguredMetadata;
 import net.stickycode.configured.ConfiguredBeanProcessor;
 
 /**
@@ -34,7 +34,7 @@ public class ConfiguredTemplateTest {
   ConfigurationRepository repository;
 
   @Injectable
-  ConfiguredAnnotations annotations;
+  ConfiguredMetadata annotations;
 
   @Tested
   ConfiguredBeanProcessor configuredBeanProcessor;

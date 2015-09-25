@@ -44,6 +44,9 @@ public class InlineConfigurationRepository
   public void register(ConfigurationAttribute attribute) {
     assert attribute != null;
     Configuration configuration = getConfiguration(attribute.getTarget());
+    if (attribute instanceof ForMethodOnlyBeansDummyAttribute)
+      return; // FIXME need a new api method to just register the target without the attribute
+
     log.info("registering {} for {} on {}", new Object[] { attribute, attribute.getTarget(), configuration });
     configuration.register(attribute);
   }
