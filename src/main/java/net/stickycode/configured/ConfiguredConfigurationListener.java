@@ -12,6 +12,8 @@
  */
 package net.stickycode.configured;
 
+import java.util.ConcurrentModificationException;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -48,17 +50,11 @@ public class ConfiguredConfigurationListener
 
   @Override
   public void resolve() {
-    log.debug("starting resolution");
+    log.debug("starting resolution - pass 1");
     for (Configuration configuration : configurations)
-      for (ConfigurationAttribute attribute : configuration) {
-        if (attribute.requiresResolution()) {
-          log.debug("resolve {}", attribute);
-          resolver.resolve(attribute);
-          attribute.applyCoercion(coercions);
-        }
-        attribute.invertControl(container);
-      }
+      resolveAttributes(configuration);
 
+    log.debug("starting resolution - pass 2");
     for (Configuration configuration : configurations)
       for (ConfigurationAttribute attribute : configuration)
         if (attribute.requiresResolution()) {
@@ -67,6 +63,27 @@ public class ConfiguredConfigurationListener
           attribute.applyCoercion(coercions);
           attribute.invertControl(container);
         }
+  }
+
+  private void resolveAttributes(Configuration configuration) {
+    log.debug("resolve {}", configuration);
+    try {
+      for (ConfigurationAttribute attribute : configuration) {
+        resolveAttribute(attribute);
+      }
+    }
+    catch (ConcurrentModificationException e) {
+      throw new TriedToInvertAnInvertedValue(configuration);
+    }
+  }
+
+  private void resolveAttribute(ConfigurationAttribute attribute) {
+    if (attribute.requiresResolution()) {
+      log.debug("resolve {}", attribute);
+      resolver.resolve(attribute);
+      attribute.applyCoercion(coercions);
+    }
+    attribute.invertControl(container);
   }
 
   @Override

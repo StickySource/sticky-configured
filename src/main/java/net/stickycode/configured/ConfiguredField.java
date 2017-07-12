@@ -121,8 +121,13 @@ public class ConfiguredField
 
   @Override
   public void invertControl(ComponentContainer container) {
-    if (value != null)
-      container.inject(value);
+    if (value == null)
+      return;
+
+    if (coercion.isInverted())
+      return;
+
+    container.inject(value);
   }
 
   @Override
