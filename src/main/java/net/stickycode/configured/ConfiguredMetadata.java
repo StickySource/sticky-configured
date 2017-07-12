@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import net.stickycode.stereotype.configured.CompleteConfigured;
 import org.slf4j.LoggerFactory;
 
 import net.stickycode.metadata.MetadataResolverRegistry;
@@ -24,7 +25,7 @@ public class ConfiguredMetadata {
 
   @SuppressWarnings("unchecked")
   private static Class<? extends Annotation>[] configuredLifecycleAnnotations = new Class[] { PreConfigured.class,
-      PostConfigured.class };
+      PostConfigured.class, CompleteConfigured.class };
 
   private static Map<Class<? extends Annotation>, Method> defaultSeeds = new HashMap<>();
 

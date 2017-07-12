@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.stickycode.reflector.Reflector;
+import net.stickycode.stereotype.configured.CompleteConfigured;
 import net.stickycode.stereotype.configured.PostConfigured;
 import net.stickycode.stereotype.configured.PreConfigured;
 
@@ -54,7 +55,14 @@ public class ConfiguredConfiguration
         .process(target);
   }
 
-  public void register(ConfigurationAttribute attribute) {
+	@Override
+	public void completeConfigure() {
+		new Reflector()
+			.forEachMethod(new InvokingAnnotatedMethodProcessor(CompleteConfigured.class))
+			.process(target);
+	}
+
+	public void register(ConfigurationAttribute attribute) {
     attributes.add(attribute);
   }
 
