@@ -56,9 +56,9 @@ public class ConfigurationSystem
     }
 
     log.debug("completeconfiguring");
-	  for (ConfigurationListener listener : listeners) {
-		  listener.completeConfigure();
-	  }
+    for (ConfigurationListener listener : listeners) {
+      listener.completeConfigure();
+    }
 
     log.info("configuration complete");
   }

@@ -88,13 +88,13 @@ public class ConfiguredConfigurationListener
       configuration.postConfigure();
   }
 
-	@Override
-	public void completeConfigure() {
-		for (Configuration configuration : configurations)
-			configuration.completeConfigure();
-	}
+  @Override
+  public void completeConfigure() {
+    for (Configuration configuration : configurations)
+      configuration.completeConfigure();
+  }
 
-	void configure(Configuration configuration) {
+  void configure(Configuration configuration) {
     for (ConfigurationAttribute attribute : configuration) {
       updateAttribute(attribute);
     }

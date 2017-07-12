@@ -62,7 +62,7 @@ public class ConfigurationSystemTest {
     system.start();
 
     assertThat(listener.order)
-        .containsExactly("resolve", "preConfigure", "configure", "postConfigure", "completeConfigure");
+      .containsExactly("resolve", "preConfigure", "configure", "postConfigure", "completeConfigure");
   }
 
 }

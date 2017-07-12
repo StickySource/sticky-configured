@@ -55,14 +55,14 @@ public class ConfiguredConfiguration
         .process(target);
   }
 
-	@Override
-	public void completeConfigure() {
-		new Reflector()
-			.forEachMethod(new InvokingAnnotatedMethodProcessor(CompleteConfigured.class))
-			.process(target);
-	}
+  @Override
+  public void completeConfigure() {
+    new Reflector()
+      .forEachMethod(new InvokingAnnotatedMethodProcessor(CompleteConfigured.class))
+      .process(target);
+  }
 
-	public void register(ConfigurationAttribute attribute) {
+  public void register(ConfigurationAttribute attribute) {
     attributes.add(attribute);
   }
 

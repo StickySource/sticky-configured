@@ -120,15 +120,15 @@ public class AroundConfiguredMethodInvocationTest {
   }
 
   @Test
-	public void completeconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
-		Method m = method("completeconfigured");
-		new InvokingAnnotatedMethodProcessor(CompleteConfigured.class).processMethod(s, m);
-		new Verifications() {
-			{
-				s.completeconfigured();
-			}
-		};
-	}
+  public void completeconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
+    Method m = method("completeconfigured");
+    new InvokingAnnotatedMethodProcessor(CompleteConfigured.class).processMethod(s, m);
+    new Verifications() {
+      {
+        s.completeconfigured();
+      }
+    };
+  }
 
 
   private Method method(String methodName) throws NoSuchMethodException {
