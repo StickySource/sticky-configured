@@ -56,7 +56,7 @@ public class ConfiguredConfiguration
   }
 
   @Override
-  public void completeConfigure() {
+  public void configurationComplete() {
     new Reflector()
       .forEachMethod(new InvokingAnnotatedMethodProcessor(CompleteConfigured.class))
       .process(target);

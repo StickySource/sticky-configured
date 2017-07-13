@@ -91,7 +91,7 @@ public class ConfiguredConfigurationListener
   @Override
   public void completeConfigure() {
     for (Configuration configuration : configurations)
-      configuration.completeConfigure();
+      configuration.configurationComplete();
   }
 
   void configure(Configuration configuration) {
