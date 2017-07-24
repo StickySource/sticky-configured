@@ -55,6 +55,11 @@ public class ConfigurationSystem
       listener.postConfigure();
     }
 
+    log.debug("completeconfiguring");
+    for (ConfigurationListener listener : listeners) {
+      listener.completeConfigure();
+    }
+
     log.info("configuration complete");
   }
 

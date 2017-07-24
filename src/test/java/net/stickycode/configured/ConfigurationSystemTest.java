@@ -48,6 +48,11 @@ public class ConfigurationSystemTest {
     public void postConfigure() {
       order.add("postConfigure");
     }
+
+	  @Override
+	  public void completeConfigure() {
+		  order.add("configurationComplete");
+	  }
   }
 
   @Test
@@ -57,7 +62,7 @@ public class ConfigurationSystemTest {
     system.start();
 
     assertThat(listener.order)
-        .containsExactly("resolve", "preConfigure", "configure", "postConfigure");
+      .containsExactly("resolve", "preConfigure", "configure", "postConfigure", "configurationComplete");
   }
 
 }

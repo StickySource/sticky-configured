@@ -105,6 +105,12 @@ public class ConfiguredConfigurationListener
       configuration.postConfigure();
   }
 
+  @Override
+  public void completeConfigure() {
+    for (Configuration configuration : configurations)
+      configuration.configurationComplete();
+  }
+
   void configure(Configuration configuration) {
     for (ConfigurationAttribute attribute : configuration) {
       updateAttribute(attribute);

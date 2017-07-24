@@ -17,6 +17,7 @@ import static org.assertj.core.api.StrictAssertions.assertThat;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import net.stickycode.stereotype.configured.CompleteConfigured;
 import org.junit.Test;
 
 import mockit.Mocked;
@@ -49,6 +50,11 @@ public class AroundConfiguredMethodInvocationTest {
     @PostConfigured
     @PreConfigured
     void hasParameters(Integer badParam) {
+    }
+
+    @CompleteConfigured
+    void completeconfigured() {
+
     }
   }
 
@@ -112,6 +118,18 @@ public class AroundConfiguredMethodInvocationTest {
       }
     };
   }
+
+  @Test
+  public void completeconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
+    Method m = method("completeconfigured");
+    new InvokingAnnotatedMethodProcessor(CompleteConfigured.class).processMethod(s, m);
+    new Verifications() {
+      {
+        s.completeconfigured();
+      }
+    };
+  }
+
 
   private Method method(String methodName) throws NoSuchMethodException {
     return Sample.class.getDeclaredMethod(methodName, new Class[0]);
