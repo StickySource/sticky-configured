@@ -7,13 +7,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import net.stickycode.stereotype.configured.CompleteConfigured;
 import org.slf4j.LoggerFactory;
 
 import net.stickycode.metadata.MetadataResolverRegistry;
 import net.stickycode.reflector.AnnotationFinder;
 import net.stickycode.stereotype.StickyComponent;
 import net.stickycode.stereotype.StickyFramework;
+import net.stickycode.stereotype.configured.AfterConfiguration;
+import net.stickycode.stereotype.configured.BeforeConfiguration;
 import net.stickycode.stereotype.configured.PostConfigured;
 import net.stickycode.stereotype.configured.PreConfigured;
 
@@ -25,7 +26,7 @@ public class ConfiguredMetadata {
 
   @SuppressWarnings("unchecked")
   private static Class<? extends Annotation>[] configuredLifecycleAnnotations = new Class[] { PreConfigured.class,
-      PostConfigured.class, CompleteConfigured.class };
+    PostConfigured.class, AfterConfiguration.class, BeforeConfiguration.class };
 
   private static Map<Class<? extends Annotation>, Method> defaultSeeds = new HashMap<>();
 
@@ -61,13 +62,13 @@ public class ConfiguredMetadata {
 
   public boolean typeIsConfigured(Class<?> type) {
     if (metdataResolverRegistry
-        .does(type)
-        .haveAnyFieldsMetaAnnotatedWith(getConfiguredAnnotations()))
+      .does(type)
+      .haveAnyFieldsMetaAnnotatedWith(getConfiguredAnnotations()))
       return true;
 
     if (metdataResolverRegistry
-        .does(type)
-        .haveAnyMethodsMetaAnnotatedWith(getConfiguredLifecycleAnnotations()))
+      .does(type)
+      .haveAnyMethodsMetaAnnotatedWith(getConfiguredLifecycleAnnotations()))
       return true;
 
     return false;

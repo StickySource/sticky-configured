@@ -21,7 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.stickycode.reflector.Reflector;
-import net.stickycode.stereotype.configured.CompleteConfigured;
+import net.stickycode.stereotype.configured.AfterConfiguration;
+import net.stickycode.stereotype.configured.BeforeConfiguration;
 import net.stickycode.stereotype.configured.PostConfigured;
 import net.stickycode.stereotype.configured.PreConfigured;
 
@@ -44,21 +45,28 @@ public class ConfiguredConfiguration
   @Override
   public void preConfigure() {
     new Reflector()
-        .forEachMethod(new InvokingAnnotatedMethodProcessor(PreConfigured.class))
-        .process(target);
+      .forEachMethod(new InvokingAnnotatedMethodProcessor(PreConfigured.class))
+      .process(target);
   }
 
   @Override
   public void postConfigure() {
     new Reflector()
-        .forEachMethod(new InvokingAnnotatedMethodProcessor(PostConfigured.class))
-        .process(target);
+      .forEachMethod(new InvokingAnnotatedMethodProcessor(PostConfigured.class))
+      .process(target);
   }
 
   @Override
-  public void configurationComplete() {
+  public void afterConfiguration() {
     new Reflector()
-      .forEachMethod(new InvokingAnnotatedMethodProcessor(CompleteConfigured.class))
+      .forEachMethod(new InvokingAnnotatedMethodProcessor(AfterConfiguration.class))
+      .process(target);
+  }
+
+  @Override
+  public void beforeConfiguration() {
+    new Reflector()
+      .forEachMethod(new InvokingAnnotatedMethodProcessor(BeforeConfiguration.class))
       .process(target);
   }
 

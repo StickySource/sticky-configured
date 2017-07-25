@@ -18,8 +18,7 @@ public class ConfigurationSystemTest {
   private VerifyingListener listener = new VerifyingListener();
 
   @Injectable
-  private Set<ConfigurationListener> listeners =
-      new HashSet<ConfigurationListener>(Arrays.asList(listener));
+  private Set<ConfigurationListener> listeners = new HashSet<ConfigurationListener>(Arrays.asList(listener));
 
   @Tested
   private ConfigurationSystem system;
@@ -49,10 +48,15 @@ public class ConfigurationSystemTest {
       order.add("postConfigure");
     }
 
-	  @Override
-	  public void completeConfigure() {
-		  order.add("configurationComplete");
-	  }
+    @Override
+    public void afterConfiguration() {
+      order.add("afterConfiguration");
+    }
+
+    @Override
+    public void beforeConfiguration() {
+      order.add("beforeConfiguration");
+    }
   }
 
   @Test
@@ -62,7 +66,7 @@ public class ConfigurationSystemTest {
     system.start();
 
     assertThat(listener.order)
-      .containsExactly("resolve", "preConfigure", "configure", "postConfigure", "configurationComplete");
+      .containsExactly("beforeConfiguration", "resolve", "preConfigure", "configure", "postConfigure", "afterConfiguration");
   }
 
 }

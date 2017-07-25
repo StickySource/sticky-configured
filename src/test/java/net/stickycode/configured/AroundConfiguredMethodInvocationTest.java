@@ -17,11 +17,12 @@ import static org.assertj.core.api.StrictAssertions.assertThat;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import net.stickycode.stereotype.configured.CompleteConfigured;
 import org.junit.Test;
 
 import mockit.Mocked;
 import mockit.Verifications;
+import net.stickycode.stereotype.configured.AfterConfiguration;
+import net.stickycode.stereotype.configured.BeforeConfiguration;
 import net.stickycode.stereotype.configured.Configured;
 import net.stickycode.stereotype.configured.PostConfigured;
 import net.stickycode.stereotype.configured.PreConfigured;
@@ -52,8 +53,13 @@ public class AroundConfiguredMethodInvocationTest {
     void hasParameters(Integer badParam) {
     }
 
-    @CompleteConfigured
-    void completeconfigured() {
+    @AfterConfiguration
+    void after() {
+
+    }
+
+    @BeforeConfiguration
+    void before() {
 
     }
   }
@@ -102,6 +108,7 @@ public class AroundConfiguredMethodInvocationTest {
     new InvokingAnnotatedMethodProcessor(PreConfigured.class).processMethod(s, m);
 
     new Verifications() {
+
       {
         s.preconfigured();
       }
@@ -113,6 +120,7 @@ public class AroundConfiguredMethodInvocationTest {
     Method m = method("postconfigured");
     new InvokingAnnotatedMethodProcessor(PostConfigured.class).processMethod(s, m);
     new Verifications() {
+
       {
         s.postconfigured();
       }
@@ -120,16 +128,28 @@ public class AroundConfiguredMethodInvocationTest {
   }
 
   @Test
-  public void completeconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
-    Method m = method("completeconfigured");
-    new InvokingAnnotatedMethodProcessor(CompleteConfigured.class).processMethod(s, m);
+  public void afterconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
+    Method m = method("after");
+    new InvokingAnnotatedMethodProcessor(AfterConfiguration.class).processMethod(s, m);
     new Verifications() {
+
       {
-        s.completeconfigured();
+        s.after();
       }
     };
   }
 
+  @Test
+  public void beforeconfigured(@Mocked Sample s) throws SecurityException, NoSuchMethodException {
+    Method m = method("before");
+    new InvokingAnnotatedMethodProcessor(BeforeConfiguration.class).processMethod(s, m);
+    new Verifications() {
+
+      {
+        s.before();
+      }
+    };
+  }
 
   private Method method(String methodName) throws NoSuchMethodException {
     return Sample.class.getDeclaredMethod(methodName, new Class[0]);

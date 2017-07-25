@@ -106,9 +106,15 @@ public class ConfiguredConfigurationListener
   }
 
   @Override
-  public void completeConfigure() {
+  public void beforeConfiguration() {
     for (Configuration configuration : configurations)
-      configuration.configurationComplete();
+      configuration.beforeConfiguration();
+  }
+
+  @Override
+  public void afterConfiguration() {
+    for (Configuration configuration : configurations)
+      configuration.afterConfiguration();
   }
 
   void configure(Configuration configuration) {

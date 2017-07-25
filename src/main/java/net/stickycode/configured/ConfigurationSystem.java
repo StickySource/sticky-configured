@@ -35,6 +35,11 @@ public class ConfigurationSystem
   public void start() {
     log.info("configuration starting");
 
+    log.debug("beforeconfiguration");
+    for (ConfigurationListener listener : listeners) {
+      listener.beforeConfiguration();
+    }
+
     log.debug("resolving");
     for (ConfigurationListener listener : listeners) {
       listener.resolve();
@@ -55,9 +60,9 @@ public class ConfigurationSystem
       listener.postConfigure();
     }
 
-    log.debug("completeconfiguring");
+    log.debug("afterconfiguration");
     for (ConfigurationListener listener : listeners) {
-      listener.completeConfigure();
+      listener.afterConfiguration();
     }
 
     log.info("configuration complete");
