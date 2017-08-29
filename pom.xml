@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2010 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved. -->
+<!-- Copyright (c) 2017 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <groupId>net.stickycode.parent</groupId>
     <artifactId>sticky-parent-jar8</artifactId>
-    <version>2.2</version>
+    <version>3.1</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.stickycode.configured</groupId>
   <artifactId>sticky-configured</artifactId>
@@ -16,7 +18,7 @@
   <name>sticky-configured-6</name>
   <description>Taking the configuration out of applications, using the same principles that underly dependency injection</description>
   <inceptionYear>2008</inceptionYear>
-  <url>http://www.StickyCode.net/configured/sticky-configured/</url>
+  <url>https://github.com/StickySource/configured</url>
 
   <scm>
     <developerConnection>${git.url}</developerConnection>
